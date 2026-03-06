@@ -1,1177 +1,938 @@
-import { Head, Link } from '@inertiajs/react';
-import MainLayout from '@/layouts/MainLayout';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
+import MainLayout from "@/layouts/MainLayout";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-interface Value {
-    icon: string;
-    title: string;
-    desc: string;
-    color: string;
+// ─── Data constants (extracted from JSX for clarity) ───────────────────────
+const INFO_CARDS = [
+  { label: "Who We Are", arrow: "↗", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit utelit tallus laborum." },
+  { label: "Our Vision",  arrow: "→", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit utelit tallus laborum." },
+  { label: "Our Mission", arrow: "→", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit utelit tallus laborum." },
+];
+
+const TEAM_MEMBERS = [
+  { name: "Cartier Bresson", role: "CEO / Founder",  email: "cartier@creatv.com", bg: "#4fc3f7" },
+  { name: "Viola Spencer",   role: "Project Manager", email: "viola@creatv.com",   bg: "#f48fb1" },
+  { name: "Carmen Hayes",    role: "Motion Designer", email: "carmen@creatv.com",  bg: "#e0e0e0" },
+  { name: "Monica Barker",   role: "Digital Manager", email: "monica@creatv.com",  bg: "#90caf9" },
+];
+
+const AWARDS = [
+  { country: "Indonesia", name: "Web Design Awards",   years: "2010 – 2011" },
+  { country: "Australia", name: "Mobile App Awards",   years: "2016 – 2017" },
+  { country: "Japan",     name: "Animation Awards",    years: "2019 – 2020" },
+  { country: "USA",       name: "UX Innovation Award", years: "2021 – 2022" },
+];
+
+const SKILLS = [
+  { name: "UI/UX Design",      pct: 97 },
+  { name: "Content Creation",  pct: 83 },
+  { name: "Digital Marketing", pct: 75 },
+  { name: "Web Design",        pct: 90 },
+  { name: "Digital Arts",      pct: 87 },
+];
+
+const WHY_CARDS = [
+  { num: "01.", title: "Hard Work",       desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+  { num: "02.", title: "Transparency",    desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+  { num: "03.", title: "More Innovation", desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+  { num: "04.", title: "Best Team Work",  desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+  { num: "05.", title: "Very Excellence", desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+  { num: "06.", title: "Fast Growth",     desc: "Lorem ipsum dolor sit amet simet consectetur adipiscing elit vehi diam diam dui cursus feugiat auli volutpat pharetra feugiat facilisis." },
+];
+
+const FAQ_ITEMS = [
+  { q: "1. What is a digital agency?",                         a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "2. What services does a digital agency offer?",        a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "3. How can a digital agency benefit my business?",      a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "4. How do digital agencies approach a new project?",    a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "5. What is the cost of digital agency services?",       a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "7. What sets a good digital agency apart from others?", a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+  { q: "8. How do I ask for support?",                          a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
+];
+
+const TICKER_ITEMS = ["Our Story", "Our Team", "Why Choose Us", "FAQ's"];
+
+// ─── Reusable Ticker component (fixes duplicate-ref bug) ────────────────────
+function Ticker({ label, className = "ticker-wrap", trackClass = "ticker-track", itemClass = "ticker-item" }) {
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    const init = async () => {
+      const gsap = (await import("gsap")).default;
+      const wrap = wrapRef.current;
+      if (!wrap) return;
+      const track = wrap.querySelector(`.${trackClass}`);
+      if (track && !wrap.dataset.cloned) {
+        wrap.appendChild(track.cloneNode(true));
+        wrap.dataset.cloned = "1";
+      }
+      gsap.to(wrap.querySelectorAll(`.${trackClass}`), {
+        x: "-100%", duration: 18, ease: "none", repeat: -1,
+      });
+    };
+    init();
+  }, [trackClass]);
+
+  return (
+    <div className={className}>
+      <div className="ticker-inner" ref={wrapRef}>
+        <div className={trackClass}>
+          {Array(10).fill(label).map((t, i) => (
+            <span className={itemClass} key={i}>{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
-interface Milestone {
-    year: string;
-    title: string;
-    desc: string;
-}
-interface TeamMember {
-    name: string;
-    role: string;
-    initial: string;
-    color: string;
-}
-interface Award {
-    title: string;
-    body: string;
-    year: string;
-}
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-const VALUES: Value[] = [
-    {
-        icon: 'bi-bullseye',
-        color: '#00B4D8',
-        title: 'Precision First',
-        desc: 'Every millimeter matters. We calibrate our presses daily to guarantee perfect colour registration and sharp detail.',
-    },
-    {
-        icon: 'bi-lightning-charge-fill',
-        color: '#E91E8C',
-        title: 'Speed Without Compromise',
-        desc: 'Rush turnarounds are our specialty — we move fast without ever sacrificing the quality your brand deserves.',
-    },
-    {
-        icon: 'bi-handshake-fill',
-        color: '#FFD600',
-        title: 'Client Partnership',
-        desc: 'We treat every project as a collaboration. Your success is our success, and we stay with you from brief to delivery.',
-    },
-    {
-        icon: 'bi-recycle',
-        color: '#00B4D8',
-        title: 'Sustainable Printing',
-        desc: "We use eco-certified inks and responsibly sourced papers, because great printing shouldn't cost the planet.",
-    },
-];
-
-const MILESTONES: Milestone[] = [
-    {
-        year: '2009',
-        title: 'Founded',
-        desc: 'Done Printing House opens its first press in Phnom Penh with a single offset machine and a big vision.',
-    },
-    {
-        year: '2013',
-        title: 'Large Format',
-        desc: 'We expand into wide-format printing — banners, signage, and murals — serving event and retail clients.',
-    },
-    {
-        year: '2017',
-        title: 'Full Service',
-        desc: 'In-house design studio launches, making us a one-stop creative and print partner for brands of all sizes.',
-    },
-    {
-        year: '2020',
-        title: 'Digital Offset',
-        desc: 'Invested in next-generation digital offset presses for faster turnaround and even sharper colour accuracy.',
-    },
-    {
-        year: '2023',
-        title: 'Packaging Studio',
-        desc: 'Dedicated packaging line opens, handling custom boxes, bags, labels, and branded wrapping for product brands.',
-    },
-    {
-        year: '2025',
-        title: 'Regional Growth',
-        desc: '500+ active clients, 5,000+ projects delivered, and expanding our footprint across Southeast Asia.',
-    },
-];
-
-const TEAM: TeamMember[] = [
-    {
-        name: 'Dara Noun',
-        role: 'Founder & CEO',
-        initial: 'D',
-        color: '#00B4D8',
-    },
-    {
-        name: 'Sreymom Keo',
-        role: 'Creative Director',
-        initial: 'S',
-        color: '#E91E8C',
-    },
-    {
-        name: 'Piseth Chan',
-        role: 'Head of Production',
-        initial: 'P',
-        color: '#FFD600',
-    },
-    {
-        name: 'Botum Lim',
-        role: 'Client Relations Manager',
-        initial: 'B',
-        color: '#00B4D8',
-    },
-];
-
-const AWARDS: Award[] = [
-    {
-        title: 'Best Print Quality',
-        body: 'Cambodia Business Awards',
-        year: '2023',
-    },
-    {
-        title: 'Top SME Partner',
-        body: 'Phnom Penh Chamber of Commerce',
-        year: '2022',
-    },
-    {
-        title: 'Green Printer Award',
-        body: 'ASEAN Sustainability Forum',
-        year: '2021',
-    },
-];
-
-const STATS = [
-    { val: '15+', lbl: 'Years Operating', color: '#00B4D8' },
-    { val: '5K+', lbl: 'Projects Delivered', color: '#E91E8C' },
-    { val: '500+', lbl: 'Active Clients', color: '#FFD600' },
-    { val: '30+', lbl: 'Team Members', color: '#00B4D8' },
-];
-
-// ─── Component ───────────────────────────────────────────────────────────────
+// ─── Main component ──────────────────────────────────────────────────────────
 export default function About() {
-    const [activeYear, setActiveYear] = useState(0);
-    const heroRef = useRef<HTMLElement>(null);
-    const [heroVis, setHeroVis] = useState(false);
+  const heroRef     = useRef(null);
+  const section2Ref = useRef(null);
+  const imgRef      = useRef(null);
+  const cardsRef    = useRef(null);
+  const workRef     = useRef(null);
+  const ctaRef      = useRef(null);
+  const skillsRef   = useRef(null);
+  const whyRef      = useRef(null);
+  const faqRef      = useRef(null);
+  const teamRef     = useRef(null);
+  const ctxRef      = useRef(null);
 
-    useEffect(() => {
-        setHeroVis(true);
-    }, []);
+  const [openFaq, setOpenFaq] = useState(0);
 
-    // Auto-advance timeline
-    useEffect(() => {
-        const t = setInterval(
-            () => setActiveYear((p) => (p + 1) % MILESTONES.length),
-            4500,
-        );
-        return () => clearInterval(t);
-    }, []);
+  useEffect(() => {
+    const initGSAP = async () => {
+      const gsap = (await import("gsap")).default;
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
 
-    return (
-        <MainLayout>
-            <Head title="About — Done Printing House & Advertising" />
+      ctxRef.current = gsap.context(() => {
 
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Barlow:wght@400;500;600&display=swap');
+        // ── Hero entrance ──
+        gsap.from(heroRef.current.querySelectorAll(".hero-line"), {
+          y: 80, opacity: 0, duration: 1, stagger: 0.15,
+          ease: "power3.out", clearProps: "all",
+        });
+        gsap.from(heroRef.current.querySelector(".about-desc"), {
+          y: 30, opacity: 0, duration: 0.9, delay: 0.5,
+          ease: "power3.out", clearProps: "all",
+        });
 
-                :root {
-                    --M: #E91E8C;
-                    --C: #00B4D8;
-                    --Y: #FFD600;
-                    --K: #080808;
-                    --s1: #0f0f0f;
-                    --s2: #161616;
-                    --s3: #1d1d1d;
-                    --silver: #C0C0C0;
-                    --dim: #686868;
-                }
+        // ── Section 2 ──
+        gsap.from(section2Ref.current.querySelectorAll(".s2-heading .word"), {
+          scrollTrigger: { trigger: section2Ref.current, start: "top 75%", toggleActions: "play none none reverse" },
+          y: 60, opacity: 0, duration: 0.8, stagger: 0.12,
+          ease: "power3.out", clearProps: "all",
+        });
+        gsap.from(imgRef.current, {
+          scrollTrigger: { trigger: imgRef.current, start: "top 70%", toggleActions: "play none none reverse" },
+          x: 80, opacity: 0, duration: 1, ease: "power3.out", clearProps: "all",
+        });
+        gsap.from(cardsRef.current.querySelectorAll(".info-card"), {
+          scrollTrigger: { trigger: cardsRef.current, start: "top 80%", toggleActions: "play none none reverse" },
+          y: 40, opacity: 0, duration: 0.7, stagger: 0.15,
+          ease: "power3.out", clearProps: "all",
+        });
+        const videoBlock = section2Ref.current.querySelector(".s2-video-block");
+        if (videoBlock) {
+          gsap.from(videoBlock, {
+            scrollTrigger: { trigger: videoBlock, start: "top 85%", toggleActions: "play none none reverse" },
+            x: -60, opacity: 0, duration: 0.9, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-                html { scroll-behavior: smooth; }
-                body { background: var(--K) !important; color: #fff; }
+        // ── Team cards ──
+        if (teamRef.current) {
+          gsap.from(teamRef.current.querySelector(".team-heading"), {
+            scrollTrigger: { trigger: teamRef.current, start: "top 78%", toggleActions: "play none none reverse" },
+            y: 50, opacity: 0, duration: 0.8, ease: "power3.out", clearProps: "all",
+          });
+          gsap.from(teamRef.current.querySelectorAll(".team-card"), {
+            scrollTrigger: { trigger: teamRef.current, start: "top 68%", toggleActions: "play none none reverse" },
+            y: 60, opacity: 0, duration: 0.7, stagger: 0.12, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                .about-page {
-                    font-family: 'Barlow', sans-serif;
-                    background: var(--K);
-                    overflow-x: hidden;
-                }
+        // ── Skills bars ──
+        if (skillsRef.current) {
+          gsap.from(skillsRef.current.querySelector(".skills-title"), {
+            scrollTrigger: { trigger: skillsRef.current, start: "top 78%", toggleActions: "play none none reverse" },
+            x: -50, opacity: 0, duration: 0.8, ease: "power3.out", clearProps: "all",
+          });
+          gsap.from(skillsRef.current.querySelectorAll(".award-row"), {
+            scrollTrigger: { trigger: skillsRef.current, start: "top 72%", toggleActions: "play none none reverse" },
+            x: -40, opacity: 0, duration: 0.6, stagger: 0.1, ease: "power3.out", clearProps: "all",
+          });
+          skillsRef.current.querySelectorAll(".skill-fill").forEach((bar) => {
+            const targetWidth = bar.dataset.width;
+            gsap.fromTo(bar,
+              { width: "0%" },
+              {
+                scrollTrigger: { trigger: skillsRef.current, start: "top 70%", toggleActions: "play none none reverse" },
+                width: targetWidth, duration: 1.2, ease: "power2.out", delay: 0.3,
+              }
+            );
+          });
+        }
 
-                /* ── Shared layout ── */
-                .wrap {
-                    max-width: 1300px;
-                    margin: 0 auto;
-                    padding: 0 40px;
-                }
+        // ── Work cards ──
+        if (workRef.current) {
+          gsap.from(workRef.current.querySelector(".s3-title"), {
+            scrollTrigger: { trigger: workRef.current, start: "top 75%", toggleActions: "play none none reverse" },
+            y: 50, opacity: 0, duration: 0.8, ease: "power3.out", clearProps: "all",
+          });
+          gsap.from(workRef.current.querySelectorAll(".work-card"), {
+            scrollTrigger: { trigger: workRef.current, start: "top 65%", toggleActions: "play none none reverse" },
+            y: 60, opacity: 0, duration: 0.7, stagger: 0.1, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                /* ── Shared eyebrow + title ── */
-                .eyebrow {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700;
-                    font-size: 11px;
-                    letter-spacing: 5px;
-                    text-transform: uppercase;
-                    color: var(--M);
-                    margin-bottom: 14px;
-                }
-                .eyebrow::before {
-                    content: '';
-                    display: inline-block;
-                    width: 22px; height: 2px;
-                    background: currentColor;
-                }
-                .sec-title {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(40px, 5.5vw, 74px);
-                    line-height: 0.92;
-                    color: white;
-                }
-                .sec-title em {
-                    font-style: normal;
-                    background: linear-gradient(135deg, var(--C), var(--M));
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                }
+        // ── Why Choose Us ──
+        if (whyRef.current) {
+          gsap.from(whyRef.current.querySelector(".why-heading"), {
+            scrollTrigger: { trigger: whyRef.current, start: "top 78%", toggleActions: "play none none reverse" },
+            y: 40, opacity: 0, duration: 0.8, ease: "power3.out", clearProps: "all",
+          });
+          gsap.from(whyRef.current.querySelectorAll(".why-card"), {
+            scrollTrigger: { trigger: whyRef.current, start: "top 68%", toggleActions: "play none none reverse" },
+            y: 50, opacity: 0, duration: 0.7, stagger: 0.08, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                /* ── Shared buttons ── */
-                .btn-p {
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700; font-size: 14px; letter-spacing: 3px;
-                    text-transform: uppercase; text-decoration: none;
-                    color: #000; padding: 15px 38px;
-                    background: linear-gradient(135deg, var(--C), var(--M));
-                    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    overflow: hidden; white-space: nowrap;
-                }
-                .btn-p::after {
-                    content: ''; position: absolute; inset: 0;
-                    background: linear-gradient(135deg, var(--M), var(--Y));
-                    opacity: 0; transition: opacity 0.3s ease;
-                }
-                .btn-p > * { position: relative; z-index: 1; }
-                .btn-p:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(233,30,140,0.5); }
-                .btn-p:hover::after { opacity: 1; }
+        // ── FAQ ──
+        if (faqRef.current) {
+          gsap.from(faqRef.current.querySelector(".faq-left"), {
+            scrollTrigger: { trigger: faqRef.current, start: "top 78%", toggleActions: "play none none reverse" },
+            x: -50, opacity: 0, duration: 0.9, ease: "power3.out", clearProps: "all",
+          });
+          gsap.from(faqRef.current.querySelectorAll(".faq-item"), {
+            scrollTrigger: { trigger: faqRef.current, start: "top 72%", toggleActions: "play none none reverse" },
+            x: 40, opacity: 0, duration: 0.6, stagger: 0.08, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                .btn-o {
-                    display: inline-flex; align-items: center; gap: 10px;
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700; font-size: 14px; letter-spacing: 3px;
-                    text-transform: uppercase; text-decoration: none;
-                    color: var(--silver); padding: 14px 38px;
-                    border: 1px solid rgba(192,192,192,0.2);
-                    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-                    transition: all 0.3s ease; white-space: nowrap;
-                }
-                .btn-o:hover {
-                    border-color: var(--C); color: var(--C);
-                    background: rgba(0,180,216,0.07);
-                    box-shadow: 0 0 30px rgba(0,180,216,0.15);
-                }
+        // ── CTA ──
+        if (ctaRef.current) {
+          gsap.from(ctaRef.current.querySelector(".cta-box"), {
+            scrollTrigger: { trigger: ctaRef.current, start: "top 80%", toggleActions: "play none none reverse" },
+            y: 40, opacity: 0, duration: 0.9, ease: "power3.out", clearProps: "all",
+          });
+        }
 
-                /* ══════════════════════════════════════
-                   HERO — PAGE HEADER
-                ══════════════════════════════════════ */
-                .ab-hero {
-                    position: relative;
-                    padding: 160px 0 110px;
-                    background: var(--K);
-                    overflow: hidden;
-                    border-bottom: 1px solid rgba(255,255,255,0.05);
-                }
+      }, heroRef);
+    };
 
-                /* Grid texture */
-                .ab-hero-grid {
-                    position: absolute; inset: 0;
-                    background-image:
-                        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-                    background-size: 64px 64px;
-                    pointer-events: none;
-                }
+    initGSAP();
+    return () => ctxRef.current?.revert();
+  }, []);
 
-                /* Glows */
-                .ab-hero-gl {
-                    position: absolute; left: -200px; top: 0;
-                    width: 600px; height: 600px;
-                    background: radial-gradient(circle, rgba(0,180,216,0.12) 0%, transparent 65%);
-                    pointer-events: none;
-                }
-                .ab-hero-gr {
-                    position: absolute; right: -100px; bottom: -80px;
-                    width: 500px; height: 500px;
-                    background: radial-gradient(circle, rgba(233,30,140,0.12) 0%, transparent 65%);
-                    pointer-events: none;
-                }
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500&display=swap');
 
-                /* Big background text */
-                .ab-hero-bg {
-                    position: absolute; right: -20px; top: 50%;
-                    transform: translateY(-50%);
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(130px, 20vw, 280px);
-                    color: rgba(255,255,255,0.025);
-                    white-space: nowrap; pointer-events: none; user-select: none;
-                    letter-spacing: 10px; line-height: 1;
-                }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { background: #0e0c2e; }
 
-                .ab-hero-inner {
-                    position: relative; z-index: 2;
-                }
+        .page-wrap {
+          font-family: 'Barlow', sans-serif;
+          background: #0e0c2e;
+          color: #fff;
+          overflow-x: hidden;
+        }
 
-                .ab-hero-layout {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 80px;
-                    align-items: center;
-                }
+        /* ─── HERO ─── */
+        .about-hero {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          background: radial-gradient(ellipse 90% 70% at 50% 40%, #1a1660 0%, #0e0c2e 68%);
+          text-align: center;
+          padding: 120px 60px 80px;
+          overflow: hidden;
+        }
+        .about-hero::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+          background-size: 60px 60px;
+          pointer-events: none;
+        }
+        .about-hero-inner {
+          position: relative;
+          z-index: 1;
+          max-width: 1100px;
+          width: 100%;
+          margin: 0 auto;
+        }
+        .about-breadcrumb {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          color: rgba(255,255,255,0.35);
+          margin-bottom: 32px;
+        }
+        .about-breadcrumb span.sep { color: #7c3aed; }
+        .about-breadcrumb span.current { color: rgba(255,255,255,0.65); }
+        .about-hero-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900;
+          text-transform: uppercase;
+          line-height: 0.88;
+          margin-bottom: 36px;
+        }
+        .hero-line {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+        .hero-line span.solid {
+          font-size: clamp(80px, 12vw, 170px);
+          color: #fff;
+          letter-spacing: -3px;
+          line-height: 0.88;
+        }
+        .hero-line span.outline {
+          font-size: clamp(80px, 12vw, 170px);
+          color: transparent;
+          -webkit-text-stroke: 2.5px rgba(255,255,255,0.38);
+          letter-spacing: -3px;
+          line-height: 0.88;
+        }
+        .about-desc {
+          font-size: 16px;
+          line-height: 1.75;
+          color: rgba(255,255,255,0.55);
+          max-width: 560px;
+          margin: 0 auto;
+        }
+        .hero-deco {
+          position: absolute;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .hero-deco.tl { width: 180px; height: 180px; top: -40px; left: -40px; }
+        .hero-deco.br { width: 240px; height: 240px; bottom: 40px; right: -40px; }
 
-                /* Left — text */
-                .ab-hero-tag {
-                    display: inline-flex; align-items: center; gap: 10px;
-                    background: rgba(0,180,216,0.07);
-                    border: 1px solid rgba(0,180,216,0.2);
-                    padding: 6px 16px;
-                    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-                    margin-bottom: 28px;
-                    opacity: 0; transform: translateY(16px);
-                    animation: up 0.6s 0.1s forwards;
-                }
-                .ab-hero-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--C); animation: pulse 2s infinite; }
-                .ab-hero-tag-txt {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700; font-size: 11px; letter-spacing: 4px;
-                    text-transform: uppercase; color: var(--C);
-                }
+        /* ─── TICKER ─── */
+        .ticker-wrap {
+          width: 100%;
+          overflow: hidden;
+          background: #7c3aed;
+          padding: 13px 0;
+          transform: rotate(-1.2deg) scaleX(1.04);
+          margin: 10px 0;
+          position: relative;
+          z-index: 10;
+        }
+        .ticker-inner { display: flex; width: max-content; }
+        .ticker-track { display: flex; white-space: nowrap; }
+        .ticker-item {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          color: #fff;
+          padding: 0 32px;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+        .ticker-item::before { content: '✦'; font-size: 9px; opacity: 0.7; }
 
-                .ab-hero-title {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(60px, 8vw, 120px);
-                    line-height: 0.88; letter-spacing: 2px;
-                    margin-bottom: 28px;
-                    opacity: 0; transform: translateY(30px);
-                    animation: up 0.9s 0.25s forwards;
-                }
-                .ab-ht1 {
-                    display: block;
-                    background: linear-gradient(135deg, #fff 0%, #bbb 70%, #888 100%);
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-                }
-                .ab-ht2 {
-                    display: block;
-                    background: linear-gradient(135deg, var(--C) 0%, var(--M) 50%, var(--Y) 100%);
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-                    filter: drop-shadow(0 0 40px rgba(233,30,140,0.3));
-                }
+        /* ─── SECTION 2 ─── */
+        .section2 {
+          max-width: 1280px;
+          margin: 0 auto;
+          min-height: 100vh;
+          padding: 100px 60px;
+          background: #0e0c2e;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 80px;
+          align-items: start;
+        }
+        .s2-heading {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900;
+          text-transform: uppercase;
+          line-height: 0.95;
+          margin-bottom: 50px;
+        }
+        .s2-heading .word { display: inline-block; overflow: hidden; }
+        .s2-heading .solid-word { font-size: clamp(50px, 6vw, 90px); color: #fff; display: block; }
+        .s2-heading .outline-word {
+          font-size: clamp(50px, 6vw, 90px);
+          color: transparent;
+          -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+          display: block;
+        }
+        .s2-video-block { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; cursor: pointer; }
+        .play-btn {
+          width: 46px; height: 46px;
+          background: #7c3aed; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; font-size: 14px;
+          transition: transform 0.3s, background 0.3s;
+        }
+        .s2-video-block:hover .play-btn { transform: scale(1.1); background: #6d28d9; }
+        .play-label { font-size: 14px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.85); }
+        .s2-body-text { font-size: 16px; line-height: 1.8; color: rgba(255,255,255,0.55); margin-bottom: 36px; max-width: 400px; }
+        .learn-more {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 16px;
+          text-transform: uppercase; letter-spacing: 2px;
+          color: #fff; text-decoration: none;
+          border-bottom: 1px solid rgba(255,255,255,0.3);
+          padding-bottom: 4px;
+          transition: border-color 0.3s, color 0.3s;
+        }
+        .learn-more:hover { color: #a78bfa; border-color: #a78bfa; }
+        .s2-img-wrap {
+          width: 100%; border-radius: 12px; overflow: hidden;
+          margin-bottom: 40px; aspect-ratio: 4/3; background: #1a1660;
+        }
+        .s2-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .info-cards { display: flex; flex-direction: column; }
+        .info-card {
+          display: grid;
+          grid-template-columns: 140px 1fr 30px;
+          align-items: center;
+          padding: 50px 0;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+          gap: 20px;
+          cursor: pointer;
+          transition: opacity 0.3s;
+        }
+        .info-card:hover { opacity: 0.8; }
+        .info-card:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+        .card-label {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 20px;
+          text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
+        }
+        .card-desc { font-size: 16px; line-height: 1.5; color: rgba(255,255,255,0.45); }
+        .card-arrow {
+          width: 28px; height: 28px;
+          border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 13px; color: rgba(255,255,255,0.5);
+          flex-shrink: 0; transition: background 0.3s, color 0.3s;
+        }
+        .info-card:hover .card-arrow { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+        .card-arrow.diagonal { transform: rotate(-45deg); }
 
-                .ab-hero-body {
-                    font-family: 'Barlow', sans-serif;
-                    font-size: 16px; line-height: 1.8; color: var(--dim);
-                    margin-bottom: 20px;
-                    opacity: 0; transform: translateY(20px);
-                    animation: up 0.8s 0.45s forwards;
-                }
-                .ab-hero-body strong { color: var(--silver); font-weight: 600; }
+        /* ─── SECTION 3: OUR WORK ─── */
+        .section3 {
+          padding: 100px 60px 80px;
+          background: #0a0828;
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+        .s3-header {
+          display: flex; align-items: flex-end;
+          justify-content: space-between; margin-bottom: 60px;
+        }
+        .s3-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900; text-transform: uppercase; line-height: 0.92;
+        }
+        .s3-title .t-solid { font-size: clamp(42px, 5vw, 72px); color: #fff; display: block; }
+        .s3-title .t-outline {
+          font-size: clamp(42px, 5vw, 72px); color: transparent;
+          -webkit-text-stroke: 2px rgba(255,255,255,0.28); display: block;
+        }
+        .s3-more-btn {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 11px;
+          text-transform: uppercase; letter-spacing: 2.5px;
+          color: #fff; background: #7c3aed;
+          padding: 12px 22px; border-radius: 5px;
+          text-decoration: none; white-space: nowrap;
+          transition: background 0.2s, transform 0.2s;
+          flex-shrink: 0; margin-bottom: 6px;
+        }
+        .s3-more-btn:hover { background: #6d28d9; transform: translateY(-1px); }
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        .work-card {
+          position: relative; border-radius: 10px;
+          overflow: hidden; cursor: pointer; background: #13103a;
+        }
+        .work-card.tall { grid-row: span 2; }
+        .work-card-img {
+          width: 100%; height: 100%; min-height: 220px;
+          object-fit: cover; display: block;
+          transition: transform 0.5s ease;
+        }
+        .work-card.tall .work-card-img { min-height: 100%; }
+        .work-card:hover .work-card-img { transform: scale(1.05); }
+        .work-card-overlay {
+          position: absolute; inset: 0;
+          background: linear-gradient(to top, rgba(10,8,40,0.95) 0%, rgba(10,8,40,0.2) 55%, transparent 100%);
+          display: flex; flex-direction: column;
+          justify-content: flex-end; padding: 20px; gap: 6px;
+        }
+        .wc-row { display: flex; align-items: center; justify-content: space-between; }
+        .wc-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 16px;
+          text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
+        }
+        .wc-tag {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 600; font-size: 10px;
+          text-transform: uppercase; letter-spacing: 1.5px;
+          color: #fff; background: #7c3aed;
+          padding: 4px 10px; border-radius: 3px; white-space: nowrap;
+        }
+        .wc-desc { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.5); max-width: 85%; }
 
-                .ab-hero-body2 {
-                    font-family: 'Barlow', sans-serif;
-                    font-size: 16px; line-height: 1.8; color: var(--dim);
-                    margin-bottom: 36px;
-                    opacity: 0; transform: translateY(20px);
-                    animation: up 0.8s 0.55s forwards;
-                }
+        /* ─── SECTION 4: CTA ─── */
+        .section4 { background: #0e0c2e; padding: 0 60px 100px; }
+        .cta-box {
+          max-width: 1280px; margin: 0 auto;
+          background: linear-gradient(135deg, #13103a 0%, #1a1660 60%, #0e0c2e 100%);
+          border: 1px solid rgba(124,58,237,0.2);
+          border-radius: 16px; padding: 80px 60px;
+          text-align: center; position: relative; overflow: hidden;
+        }
+        .cta-box::before {
+          content: '';
+          position: absolute; top: -60px; left: 50%;
+          transform: translateX(-50%);
+          width: 400px; height: 400px;
+          background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .cta-heading {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900; text-transform: uppercase;
+          line-height: 0.92; margin-bottom: 30px; position: relative;
+        }
+        .cta-heading .ch-solid { font-size: clamp(48px, 6vw, 90px); color: #fff; display: block; }
+        .cta-heading .ch-outline {
+          font-size: clamp(48px, 6vw, 90px); color: transparent;
+          -webkit-text-stroke: 2px rgba(255,255,255,0.25); display: block;
+        }
+        .cta-btn {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 12px;
+          text-transform: uppercase; letter-spacing: 2.5px;
+          color: #fff; background: #7c3aed;
+          padding: 14px 36px; border-radius: 6px;
+          text-decoration: none; display: inline-block;
+          position: relative; overflow: hidden;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.45); }
 
-                .ab-hero-btns {
-                    display: flex; gap: 14px; flex-wrap: wrap;
-                    opacity: 0; transform: translateY(20px);
-                    animation: up 0.8s 0.7s forwards;
-                }
+        /* ─── TEAM ─── */
+        .team-section { background: #0a0828; padding: 100px 60px 80px; }
+        .team-inner { max-width: 1280px; margin: 0 auto; }
+        .team-heading { text-align: center; margin-bottom: 16px; }
+        .team-heading h2 {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900; text-transform: uppercase;
+          font-size: clamp(42px, 5vw, 68px);
+          line-height: 1;
+          display: flex; align-items: center; justify-content: center;
+          gap: 16px; flex-wrap: wrap;
+        }
+        .team-heading h2 .th-solid { color: #fff; }
+        .team-heading h2 .th-outline { color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.35); }
+        .team-heading p { font-size: 14px; color: rgba(255,255,255,0.45); margin-top: 12px; }
+        .team-grid {
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 28px; margin-top: 56px;
+        }
+        .team-card { display: flex; flex-direction: column; cursor: pointer; }
+        .team-card-img {
+          width: 100%; aspect-ratio: 3/3.6;
+          border-radius: 10px; overflow: hidden;
+          margin-bottom: 18px; position: relative;
+        }
+        .team-card-img img {
+          width: 100%; height: 100%; object-fit: cover; object-position: top;
+          display: block; transition: transform 0.5s ease;
+        }
+        .team-card:hover .team-card-img img { transform: scale(1.06); }
+        .team-card-img .tc-overlay {
+          position: absolute; inset: 0;
+          background: linear-gradient(to top, rgba(10,8,40,0.5) 0%, transparent 60%);
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .team-card:hover .tc-overlay { opacity: 1; }
+        .team-card-name {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 800; font-size: 17px;
+          text-transform: uppercase; letter-spacing: 0.5px;
+          color: #fff; margin-bottom: 6px;
+        }
+        .team-card-role { font-size: 16px; color: rgba(255,255,255,0.45); margin-bottom: 3px; }
+        .team-card-email { font-size: 12px; color: rgba(124,58,237,0.8); text-decoration: none; transition: color 0.2s; }
+        .team-card-email:hover { color: #a78bfa; }
 
-                /* Right — stat cards */
-                .ab-hero-right {
-                    opacity: 0; transform: translateX(30px);
-                    animation: up 0.9s 0.4s forwards;
-                }
-                .ab-stat-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 3px;
-                }
-                .ab-stat-card {
-                    padding: 36px 28px;
-                    background: var(--s1);
-                    border-top: 3px solid transparent;
-                    position: relative;
-                    transition: background 0.3s ease, transform 0.3s ease;
-                    cursor: default;
-                }
-                .ab-stat-card:hover { background: var(--s2); transform: translateY(-3px); }
-                .ab-stat-val {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(44px, 5vw, 64px); line-height: 1;
-                    margin-bottom: 6px;
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-                }
-                .ab-stat-lbl {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #3d3d3d;
-                }
+        /* ─── BOTTOM TICKER ─── */
+        .ticker2-wrap {
+          width: 100%; overflow: hidden;
+          border-top: 1px solid rgba(124,58,237,0.2);
+          border-bottom: 1px solid rgba(124,58,237,0.2);
+          padding: 14px 0;
+        }
+        .ticker2-inner { display: flex; width: max-content; }
+        .ticker2-track { display: flex; white-space: nowrap; }
+        .ticker2-item {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 12px;
+          text-transform: uppercase; letter-spacing: 2.5px;
+          color: rgba(255,255,255,0.4);
+          padding: 0 28px; display: flex; align-items: center; gap: 10px;
+        }
+        .ticker2-item .t2-dot { width: 5px; height: 5px; background: #7c3aed; border-radius: 50%; flex-shrink: 0; }
 
-                /* CMYK bar */
-                .cmyk-bar { display: flex; height: 4px; }
-                .cmyk-bar span { flex: 1; }
+        /* ─── SKILLS & AWARDS ─── */
+        .skills-section {
+          background: #0a0828;
+          padding: 80px 60px 100px;
+          border-top: 1px solid rgba(124,58,237,0.1);
+        }
+        .skills-inner {
+          max-width: 1280px; margin: 0 auto;
+          display: grid; grid-template-columns: 280px 1fr 1fr;
+          gap: 60px; align-items: start;
+        }
+        .skills-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.88; }
+        .skills-title .st-solid { font-size: clamp(44px, 5vw, 70px); color: #fff; display: block; }
+        .skills-title .st-outline { font-size: clamp(44px, 5vw, 70px); color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.3); display: block; }
+        .awards-list { display: flex; flex-direction: column; }
+        .award-row {
+          padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+          display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end;
+        }
+        .award-row:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+        .award-country { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+        .award-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.3px; color: #fff; }
+        .award-year { font-size: 13px; color: rgba(255,255,255,0.35); white-space: nowrap; }
+        .skill-bars { display: flex; flex-direction: column; padding-top: 4px; }
+        .skill-row { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .skill-row:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+        .skill-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .skill-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.8); }
+        .skill-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; color: #7c3aed; }
+        .skill-track { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+        .skill-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #a78bfa); border-radius: 2px; }
 
-                /* ══════════════════════════════════════
-                   MISSION + VISION
-                ══════════════════════════════════════ */
-                .mv-sec {
-                    padding: 110px 0 120px;
-                    background: var(--s1);
-                    border-bottom: 1px solid rgba(255,255,255,0.04);
-                }
-                .mv-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 3px;
-                }
-                .mv-card {
-                    padding: 64px 56px;
-                    background: var(--s2);
-                    position: relative;
-                    overflow: hidden;
-                    transition: background 0.3s ease;
-                }
-                .mv-card:hover { background: var(--s3); }
-                .mv-card-bg {
-                    position: absolute; bottom: -20px; right: -10px;
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 130px; line-height: 1;
-                    color: rgba(255,255,255,0.03);
-                    pointer-events: none; user-select: none;
-                    transition: color 0.3s ease;
-                }
-                .mv-card:hover .mv-card-bg { color: rgba(255,255,255,0.055); }
-                .mv-card-accent {
-                    width: 48px; height: 3px;
-                    margin-bottom: 28px;
-                    border-radius: 2px;
-                    transition: width 0.35s ease;
-                }
-                .mv-card:hover .mv-card-accent { width: 80px; }
-                .mv-card-label {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700; font-size: 11px; letter-spacing: 5px;
-                    text-transform: uppercase; color: var(--dim);
-                    margin-bottom: 16px;
-                }
-                .mv-card-title {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(36px, 4vw, 54px); line-height: 0.95;
-                    color: white; margin-bottom: 20px;
-                    letter-spacing: 1px;
-                }
-                .mv-card-body {
-                    font-size: 15px; line-height: 1.8; color: var(--dim);
-                    position: relative; z-index: 2;
-                }
-                .mv-card-body strong { color: var(--silver); }
+        /* ─── WHY CHOOSE US ─── */
+        .why-section { background: #080620; padding: 100px 60px; }
+        .why-inner { max-width: 1280px; margin: 0 auto; }
+        .why-heading { text-align: center; margin-bottom: 60px; }
+        .why-heading h2 {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 900; text-transform: uppercase;
+          font-size: clamp(38px, 6vw, 80px);
+          line-height: 1; letter-spacing: -1px;
+          display: inline-flex; align-items: center;
+          gap: 14px; flex-wrap: wrap; justify-content: center;
+        }
+        .why-heading h2 .wh-highlight { color: #fff; background: #1e3a8a; padding: 2px 14px 4px; border-radius: 4px; }
+        .why-heading h2 .wh-solid { color: #fff; }
+        .why-heading h2 .wh-outline { color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.32); }
+        .why-heading p { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 14px; }
+        .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .why-card {
+          border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+          padding: 36px 32px 40px; background: rgba(255,255,255,0.02);
+          transition: border-color 0.3s, background 0.3s; cursor: default;
+        }
+        .why-card:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.05); }
+        .why-card-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.18); line-height: 1; margin-bottom: 22px; letter-spacing: -1px; }
+        .why-card-title { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 18px; color: #fff; margin-bottom: 14px; }
+        .why-card-desc { font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.42); }
 
-                /* ══════════════════════════════════════
-                   VALUES
-                ══════════════════════════════════════ */
-                .val-sec {
-                    padding: 110px 0 120px;
-                    background: var(--K);
-                }
-                .val-hdr { margin-bottom: 64px; }
-                .val-grid {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 2px;
-                }
-                .val-card {
-                    padding: 48px 36px;
-                    background: var(--s1);
-                    position: relative; overflow: hidden;
-                    transition: background 0.3s ease, transform 0.35s ease;
-                    cursor: default;
-                }
-                .val-card:hover { background: var(--s2); transform: translateY(-4px); }
-                .val-card::before {
-                    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-                    transform: scaleX(0); transform-origin: left;
-                    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-                }
-                .val-card:hover::before { transform: scaleX(1); }
-                .val-icon {
-                    font-size: 38px; display: block; margin-bottom: 24px;
-                    transition: transform 0.3s ease;
-                }
-                .val-card:hover .val-icon { transform: scale(1.14) rotate(-5deg); }
-                .val-title {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 900; font-size: 19px; letter-spacing: 1.5px;
-                    text-transform: uppercase; color: white; margin-bottom: 12px;
-                }
-                .val-desc { font-size: 14px; line-height: 1.75; color: var(--dim); }
+        /* ─── FAQ ─── */
+        .faq-section { background: #080620; padding: 100px 60px; }
+        .faq-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 100px; align-items: start; }
+        .faq-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.88; margin-bottom: 28px; }
+        .faq-title .ft-solid { font-size: clamp(44px, 5.5vw, 78px); color: #fff; display: block; letter-spacing: -1px; }
+        .faq-title .ft-outline { font-size: clamp(44px, 5.5vw, 78px); color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.3); display: block; letter-spacing: -1px; }
+        .faq-desc { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); margin-bottom: 36px; max-width: 340px; }
+        .faq-contact-btn {
+          font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px;
+          text-transform: uppercase; letter-spacing: 3px; color: #fff; background: #7c3aed;
+          padding: 14px 30px; border-radius: 4px; text-decoration: none; display: inline-block;
+          transition: background 0.2s, transform 0.2s;
+        }
+        .faq-contact-btn:hover { background: #6d28d9; transform: translateY(-1px); }
+        .faq-list { display: flex; flex-direction: column; }
+        .faq-item { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .faq-item:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+        .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; cursor: pointer; gap: 20px; user-select: none; }
+        .faq-q-text { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 15px; color: #fff; flex: 1; }
+        .faq-toggle {
+          width: 32px; height: 32px; border-radius: 50%;
+          background: rgba(124,58,237,0.25); border: 1px solid rgba(124,58,237,0.4);
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; font-size: 18px; color: #fff;
+          transition: background 0.25s, transform 0.3s; line-height: 1;
+        }
+        .faq-item.open .faq-toggle { background: #7c3aed; border-color: #7c3aed; transform: rotate(45deg); }
+        .faq-answer { overflow: hidden; max-height: 0; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0; }
+        .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 22px; }
+        .faq-answer p { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); max-width: 580px; }
 
-                /* ══════════════════════════════════════
-                   TIMELINE
-                ══════════════════════════════════════ */
-                .timeline-sec {
-                    padding: 110px 0 120px;
-                    background: var(--s1);
-                    border-top: 1px solid rgba(255,255,255,0.04);
-                    border-bottom: 1px solid rgba(255,255,255,0.04);
-                    position: relative; overflow: hidden;
-                }
-                .tl-bg {
-                    position: absolute; left: 50%; top: 50%;
-                    transform: translate(-50%, -50%);
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(80px, 16vw, 220px);
-                    color: rgba(255,255,255,0.018);
-                    pointer-events: none; user-select: none;
-                    letter-spacing: 12px; white-space: nowrap;
-                }
-                .tl-hdr { margin-bottom: 72px; }
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+          .about-hero { padding: 100px 24px 60px; }
+          .hero-line span.solid,
+          .hero-line span.outline { font-size: clamp(56px, 14vw, 90px); letter-spacing: -1px; }
 
-                .tl-layout {
-                    display: grid;
-                    grid-template-columns: 340px 1fr;
-                    gap: 60px;
-                    align-items: start;
-                    position: relative; z-index: 2;
-                }
+          .section2 { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
 
-                /* Left — year selector */
-                .tl-years { display: flex; flex-direction: column; gap: 3px; }
-                .tl-year-btn {
-                    display: flex; align-items: center; gap: 16px;
-                    padding: 20px 24px;
-                    background: var(--s2);
-                    border: none; cursor: pointer;
-                    transition: background 0.25s ease;
-                    text-align: left; width: 100%;
-                }
-                .tl-year-btn:hover { background: var(--s3); }
-                .tl-year-btn.active { background: var(--s3); }
-                .tl-year-dot {
-                    width: 10px; height: 10px; border-radius: 50%;
-                    background: rgba(255,255,255,0.1);
-                    flex-shrink: 0;
-                    transition: background 0.25s ease, transform 0.25s ease;
-                }
-                .tl-year-btn.active .tl-year-dot { transform: scale(1.4); }
-                .tl-year-num {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 28px; letter-spacing: 2px; line-height: 1;
-                    color: #3a3a3a;
-                    transition: color 0.25s ease;
-                }
-                .tl-year-btn.active .tl-year-num { color: white; }
-                .tl-year-label {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 700; font-size: 12px; letter-spacing: 2px;
-                    text-transform: uppercase; color: #2e2e2e;
-                    transition: color 0.25s ease;
-                }
-                .tl-year-btn.active .tl-year-label { color: var(--dim); }
+          .section3 { padding: 60px 24px; }
+          .work-grid { grid-template-columns: 1fr; }
+          .work-card.tall { grid-row: span 1; }
+          .s3-header { flex-direction: column; align-items: flex-start; gap: 20px; }
 
-                /* Right — detail panel */
-                .tl-detail {
-                    padding: 52px 56px;
-                    background: var(--s2);
-                    min-height: 280px;
-                    position: relative; overflow: hidden;
-                }
-                .tl-detail-year {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(80px, 10vw, 140px);
-                    line-height: 0.8;
-                    background: linear-gradient(135deg, var(--C), var(--M));
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-                    margin-bottom: 16px;
-                    display: block;
-                }
-                .tl-detail-title {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 44px; letter-spacing: 2px; color: white;
-                    margin-bottom: 16px; line-height: 1;
-                }
-                .tl-detail-desc {
-                    font-size: 16px; line-height: 1.8; color: var(--dim);
-                    max-width: 520px;
-                }
-                .tl-detail-bg {
-                    position: absolute; right: -10px; bottom: -20px;
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 200px; line-height: 0.8;
-                    color: rgba(255,255,255,0.025);
-                    pointer-events: none; user-select: none;
-                }
+          .section4 { padding: 0 24px 60px; }
+          .cta-box { padding: 50px 24px; }
 
-                /* ══════════════════════════════════════
-                   TEAM
-                ══════════════════════════════════════ */
-                .team-sec {
-                    padding: 110px 0 120px;
-                    background: var(--K);
-                }
-                .team-hdr { margin-bottom: 64px; }
-                .team-grid {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 2px;
-                }
-                .team-card {
-                    padding: 48px 36px;
-                    background: var(--s1);
-                    position: relative; overflow: hidden;
-                    transition: background 0.3s ease, transform 0.35s ease;
-                    cursor: default;
-                    text-align: center;
-                }
-                .team-card:hover { background: var(--s2); transform: translateY(-4px); }
-                .team-card::after {
-                    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-                    transform: scaleX(0); transform-origin: center;
-                    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-                }
-                .team-card:hover::after { transform: scaleX(1); }
-                .team-avatar {
-                    width: 72px; height: 72px; border-radius: 50%;
-                    display: flex; align-items: center; justify-content: center;
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 30px; color: #000;
-                    margin: 0 auto 20px;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                }
-                .team-card:hover .team-avatar { transform: scale(1.08); }
-                .team-name {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 900; font-size: 18px; letter-spacing: 1.5px;
-                    text-transform: uppercase; color: white; margin-bottom: 6px;
-                }
-                .team-role {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #3d3d3d;
-                }
+          .team-section { padding: 60px 24px; }
+          .team-grid { grid-template-columns: repeat(2, 1fr); }
 
-                /* ══════════════════════════════════════
-                   AWARDS
-                ══════════════════════════════════════ */
-                .awards-sec {
-                    padding: 110px 0 120px;
-                    background: var(--s1);
-                    border-top: 1px solid rgba(255,255,255,0.04);
-                    border-bottom: 1px solid rgba(255,255,255,0.04);
-                }
-                .awards-hdr { margin-bottom: 60px; }
-                .awards-grid {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 2px;
-                }
-                .award-card {
-                    padding: 52px 44px;
-                    background: var(--s2);
-                    position: relative; overflow: hidden;
-                    transition: background 0.3s ease, transform 0.3s ease;
-                    cursor: default;
-                }
-                .award-card:hover { background: var(--s3); transform: translateY(-3px); }
-                .award-card::before {
-                    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-                    background: linear-gradient(90deg, var(--C), var(--M), var(--Y));
-                    transform: scaleX(0); transform-origin: left;
-                    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-                }
-                .award-card:hover::before { transform: scaleX(1); }
-                .award-icon {
-                    font-size: 44px; display: block; margin-bottom: 24px;
-                    transition: transform 0.3s ease;
-                }
-                .award-card:hover .award-icon { transform: scale(1.1) rotate(-5deg); }
-                .award-title {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-weight: 900; font-size: 22px; letter-spacing: 1px;
-                    text-transform: uppercase; color: white; margin-bottom: 8px;
-                }
-                .award-body { font-size: 13px; letter-spacing: 1px; color: var(--dim); margin-bottom: 16px; }
-                .award-year {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 42px; letter-spacing: 2px;
-                    background: linear-gradient(135deg, var(--C), var(--M));
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                    background-clip: text; line-height: 1;
-                }
+          .skills-section { padding: 60px 24px; }
+          .skills-inner { grid-template-columns: 1fr; gap: 40px; }
 
-                /* ══════════════════════════════════════
-                   CTA BAND
-                ══════════════════════════════════════ */
-                .cta-sec {
-                    padding: 130px 0;
-                    background: var(--K);
-                    position: relative; overflow: hidden;
-                }
-                .cta-glow {
-                    position: absolute; top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 900px; height: 500px;
-                    background: radial-gradient(ellipse, rgba(233,30,140,0.1) 0%, transparent 70%);
-                    pointer-events: none;
-                }
-                .cta-bg-txt {
-                    position: absolute; top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(100px, 20vw, 280px);
-                    color: rgba(255,255,255,0.018);
-                    white-space: nowrap; pointer-events: none; user-select: none;
-                    letter-spacing: 12px;
-                }
-                .cta-inner {
-                    position: relative; z-index: 2;
-                    text-align: center; max-width: 720px;
-                    margin: 0 auto; padding: 0 24px;
-                }
-                .cta-title {
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: clamp(50px, 8vw, 108px);
-                    line-height: 0.9; color: white; margin-bottom: 22px;
-                }
-                .cta-accent {
-                    display: block;
-                    background: linear-gradient(135deg, var(--C) 0%, var(--M) 50%, var(--Y) 100%);
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                }
-                .cta-desc {
-                    font-family: 'Barlow Condensed', sans-serif;
-                    font-size: clamp(16px, 2vw, 20px); letter-spacing: 1px;
-                    color: var(--dim); margin-bottom: 48px; line-height: 1.65;
-                }
-                .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+          .why-section { padding: 60px 24px; }
+          .why-grid { grid-template-columns: 1fr 1fr; }
 
-                /* ══════════════════════════════════════
-                   KEYFRAMES
-                ══════════════════════════════════════ */
-                @keyframes up {
-                    to { opacity: 1; transform: translate(0, 0); }
-                }
-                @keyframes pulse {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50%       { opacity: 0.4; transform: scale(0.8); }
-                }
+          .faq-section { padding: 60px 24px; }
+          .faq-inner { grid-template-columns: 1fr; gap: 40px; }
+        }
 
-                /* ══════════════════════════════════════
-                   RESPONSIVE
-                ══════════════════════════════════════ */
-                @media (max-width: 1100px) {
-                    .ab-hero-layout { grid-template-columns: 1fr; gap: 56px; }
-                    .ab-hero-right { animation: up 0.9s 0.6s forwards; transform: translateY(24px); }
-                    .val-grid  { grid-template-columns: repeat(2, 1fr); }
-                    .team-grid { grid-template-columns: repeat(2, 1fr); }
-                    .tl-layout { grid-template-columns: 1fr; gap: 28px; }
-                    .tl-years  { flex-direction: row; flex-wrap: wrap; }
-                    .tl-year-btn { flex: 1 1 140px; }
-                }
+        @media (max-width: 540px) {
+          .team-grid { grid-template-columns: 1fr; }
+          .why-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
 
-                @media (max-width: 768px) {
-                    .wrap { padding: 0 22px; }
-                    .ab-hero { padding: 130px 0 80px; }
-                    .mv-grid { grid-template-columns: 1fr; }
-                    .mv-card { padding: 48px 36px; }
-                    .awards-grid { grid-template-columns: 1fr; }
-                    .tl-detail { padding: 36px 30px; }
-                    .cta-btns { flex-direction: column; align-items: center; }
-                    .btn-p, .btn-o { clip-path: none; border-radius: 2px; justify-content: center; min-width: 260px; }
-                    .mv-sec, .val-sec, .timeline-sec, .team-sec, .awards-sec, .cta-sec { padding: 80px 0 88px; }
-                }
+      <div className="page-wrap">
 
-                @media (max-width: 480px) {
-                    .val-grid  { grid-template-columns: 1fr; }
-                    .team-grid { grid-template-columns: repeat(2, 1fr); }
-                    .awards-grid { grid-template-columns: 1fr; }
-                    .ab-stat-grid { grid-template-columns: repeat(2, 1fr); }
-                    .tl-years { flex-direction: column; }
-                    .tl-year-btn { flex: none; width: 100%; }
-                    .ab-hero-btns { flex-direction: column; align-items: stretch; }
-                }
-            `}</style>
-
-            <div className="about-page">
-                {/* ══ HERO ══ */}
-                <section className="ab-hero" ref={heroRef}>
-                    <div className="ab-hero-grid" aria-hidden="true" />
-                    <div className="ab-hero-gl" aria-hidden="true" />
-                    <div className="ab-hero-gr" aria-hidden="true" />
-                    <div className="ab-hero-bg" aria-hidden="true">
-                        ABOUT
-                    </div>
-
-                    <div className="wrap ab-hero-inner">
-                        <div className="ab-hero-layout">
-                            {/* Left — copy */}
-                            <div>
-                                <div className="ab-hero-tag">
-                                    <div className="ab-hero-tag-dot" />
-                                    <span className="ab-hero-tag-txt">
-                                        Est. 2009 — Phnom Penh, Cambodia
-                                    </span>
-                                </div>
-
-                                <h1 className="ab-hero-title">
-                                    <span className="ab-ht1">Who We</span>
-                                    <span className="ab-ht2">Are.</span>
-                                </h1>
-
-                                <p className="ab-hero-body">
-                                    <strong>
-                                        Done Printing House & Advertising
-                                    </strong>{' '}
-                                    is Cambodia's premier full-service print and
-                                    creative partner. Founded in 2009, we've
-                                    spent over 15 years perfecting the art of
-                                    turning ideas into tangible, high-impact
-                                    printed materials.
-                                </p>
-                                <p className="ab-hero-body2">
-                                    From a single offset press in a small Phnom
-                                    Penh shop to a full-scale production
-                                    facility with 30+ team members, our growth
-                                    has always been driven by one thing: an
-                                    unwavering commitment to quality and client
-                                    success.
-                                </p>
-
-                                <div className="ab-hero-btns">
-                                    <Link href="/contact" className="btn-p">
-                                        <span>Work With Us</span>
-                                        <span aria-hidden="true">→</span>
-                                    </Link>
-                                    <Link href="/work" className="btn-o">
-                                        View Portfolio
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Right — stat cards */}
-                            <div className="ab-hero-right">
-                                <div className="ab-stat-grid">
-                                    {STATS.map((s) => (
-                                        <div
-                                            key={s.lbl}
-                                            className="ab-stat-card"
-                                            style={{ borderTopColor: s.color }}
-                                        >
-                                            <div
-                                                className="ab-stat-val"
-                                                style={{
-                                                    background: `linear-gradient(135deg, ${s.color}, #fff)`,
-                                                    WebkitBackgroundClip:
-                                                        'text',
-                                                    backgroundClip: 'text',
-                                                }}
-                                            >
-                                                {s.val}
-                                            </div>
-                                            <div className="ab-stat-lbl">
-                                                {s.lbl}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* CMYK bar */}
-                <div className="cmyk-bar" aria-hidden="true">
-                    <span style={{ background: '#00B4D8' }} />
-                    <span style={{ background: '#E91E8C' }} />
-                    <span style={{ background: '#FFD600' }} />
-                    <span style={{ background: '#1c1c1c' }} />
-                </div>
-
-                {/* ══ MISSION + VISION ══ */}
-                <section className="mv-sec" aria-label="Mission and Vision">
-                    <div className="wrap">
-                        <div className="mv-grid">
-                            {/* Mission */}
-                            <div className="mv-card">
-                                <div className="mv-card-bg" aria-hidden="true">
-                                    M
-                                </div>
-                                <div
-                                    className="mv-card-accent"
-                                    style={{ background: '#00B4D8' }}
-                                />
-                                <div className="mv-card-label">Our Mission</div>
-                                <div className="mv-card-title">
-                                    Print That
-                                    <br />
-                                    Performs.
-                                </div>
-                                <p className="mv-card-body">
-                                    To empower businesses and brands across
-                                    Cambodia and Southeast Asia with{' '}
-                                    <strong>exceptional print quality</strong>,
-                                    creative excellence, and reliable service —
-                                    delivered with speed and integrity, every
-                                    single time.
-                                </p>
-                            </div>
-                            {/* Vision */}
-                            <div className="mv-card">
-                                <div className="mv-card-bg" aria-hidden="true">
-                                    V
-                                </div>
-                                <div
-                                    className="mv-card-accent"
-                                    style={{ background: '#E91E8C' }}
-                                />
-                                <div className="mv-card-label">Our Vision</div>
-                                <div className="mv-card-title">
-                                    Southeast
-                                    <br />
-                                    Asia's Best.
-                                </div>
-                                <p className="mv-card-body">
-                                    To be the most trusted printing and
-                                    advertising partner in Southeast Asia —
-                                    known for{' '}
-                                    <strong>precision, innovation</strong>, and
-                                    a team that treats every project as if it
-                                    were their own brand on the line.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* ══ VALUES ══ */}
-                <section className="val-sec" aria-label="Our values">
-                    <div className="wrap">
-                        <div className="val-hdr">
-                            <div className="eyebrow">Our Values</div>
-                            <h2 className="sec-title">
-                                What <em>Drives</em> Us
-                            </h2>
-                        </div>
-                        <div className="val-grid">
-                            {VALUES.map((v, i) => (
-                                <div key={v.title} className="val-card">
-                                    <style>{`.val-card:nth-child(${i + 1})::before { background: ${v.color}; }`}</style>
-                                    <i
-                                        className={`bi ${v.icon} val-icon`}
-                                        style={{ color: v.color }}
-                                        aria-hidden="true"
-                                    />
-                                    <div className="val-title">{v.title}</div>
-                                    <p className="val-desc">{v.desc}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ══ TIMELINE ══ */}
-                <section className="timeline-sec" aria-label="Company history">
-                    <div className="tl-bg" aria-hidden="true">
-                        TIMELINE
-                    </div>
-                    <div className="wrap">
-                        <div className="tl-hdr">
-                            <div
-                                className="eyebrow"
-                                style={{ color: 'var(--C)' }}
-                            >
-                                <style>{`.timeline-sec .eyebrow::before { background: var(--C) !important; }`}</style>
-                                Our Journey
-                            </div>
-                            <h2 className="sec-title">
-                                15 Years of{' '}
-                                <em
-                                    style={{
-                                        background:
-                                            'linear-gradient(135deg, var(--C), var(--Y))',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        backgroundClip: 'text',
-                                    }}
-                                >
-                                    Growth
-                                </em>
-                            </h2>
-                        </div>
-
-                        <div className="tl-layout">
-                            {/* Year selector */}
-                            <div
-                                className="tl-years"
-                                role="tablist"
-                                aria-label="Timeline years"
-                            >
-                                {MILESTONES.map((m, i) => (
-                                    <button
-                                        key={m.year}
-                                        className={`tl-year-btn ${i === activeYear ? 'active' : ''}`}
-                                        onClick={() => setActiveYear(i)}
-                                        role="tab"
-                                        aria-selected={i === activeYear}
-                                        style={i === activeYear ? {} : {}}
-                                    >
-                                        <div
-                                            className="tl-year-dot"
-                                            style={
-                                                i === activeYear
-                                                    ? { background: '#00B4D8' }
-                                                    : {}
-                                            }
-                                        />
-                                        <div>
-                                            <div className="tl-year-num">
-                                                {m.year}
-                                            </div>
-                                            <div className="tl-year-label">
-                                                {m.title}
-                                            </div>
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Detail panel */}
-                            <div className="tl-detail">
-                                <div
-                                    className="tl-detail-bg"
-                                    aria-hidden="true"
-                                >
-                                    {MILESTONES[activeYear].year}
-                                </div>
-                                <span className="tl-detail-year">
-                                    {MILESTONES[activeYear].year}
-                                </span>
-                                <div className="tl-detail-title">
-                                    {MILESTONES[activeYear].title}
-                                </div>
-                                <p className="tl-detail-desc">
-                                    {MILESTONES[activeYear].desc}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* ══ TEAM ══ */}
-                <section className="team-sec" aria-label="Our team">
-                    <div className="wrap">
-                        <div className="team-hdr">
-                            <div className="eyebrow">The Team</div>
-                            <h2 className="sec-title">
-                                People <em>Behind</em> the Print
-                            </h2>
-                        </div>
-                        <div className="team-grid">
-                            {TEAM.map((member, i) => (
-                                <div key={member.name} className="team-card">
-                                    <style>{`
-                                        .team-card:nth-child(${i + 1}) .team-avatar {
-                                            background: ${member.color};
-                                            box-shadow: 0 0 0 0 ${member.color}40;
-                                        }
-                                        .team-card:nth-child(${i + 1}):hover .team-avatar {
-                                            box-shadow: 0 0 24px ${member.color}55;
-                                        }
-                                        .team-card:nth-child(${i + 1})::after {
-                                            background: ${member.color};
-                                        }
-                                    `}</style>
-                                    <div className="team-avatar">
-                                        {member.initial}
-                                    </div>
-                                    <div className="team-name">
-                                        {member.name}
-                                    </div>
-                                    <div className="team-role">
-                                        {member.role}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ══ AWARDS ══ */}
-                <section
-                    className="awards-sec"
-                    aria-label="Awards and recognition"
-                >
-                    <div className="wrap">
-                        <div className="awards-hdr">
-                            <div className="eyebrow">Recognition</div>
-                            <h2 className="sec-title">
-                                Awards & <em>Achievements</em>
-                            </h2>
-                        </div>
-                        <div className="awards-grid">
-                            {AWARDS.map((a) => (
-                                <div key={a.title} className="award-card">
-                                    <i
-                                        className="bi bi-trophy-fill award-icon"
-                                        aria-hidden="true"
-                                    />
-                                    <div className="award-title">{a.title}</div>
-                                    <div className="award-body">{a.body}</div>
-                                    <div className="award-year">{a.year}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ══ CTA ══ */}
-                <section className="cta-sec" aria-label="Call to action">
-                    <div className="cta-bg-txt" aria-hidden="true">
-                        DONE
-                    </div>
-                    <div className="cta-glow" aria-hidden="true" />
-                    <div className="cta-inner">
-                        <h2 className="cta-title">
-                            Let's Build
-                            <span className="cta-accent">Something Great.</span>
-                        </h2>
-                        <p className="cta-desc">
-                            Whether you have a brief ready or just an idea — our
-                            team is ready to bring it to life.
-                        </p>
-                        <div className="cta-btns">
-                            <Link
-                                href="/contact"
-                                className="btn-p"
-                                style={{
-                                    padding: '18px 52px',
-                                    fontSize: '15px',
-                                }}
-                            >
-                                <span>Start a Project</span>
-                                <span aria-hidden="true">→</span>
-                            </Link>
-                            <Link
-                                href="/work"
-                                className="btn-o"
-                                style={{
-                                    padding: '17px 52px',
-                                    fontSize: '15px',
-                                }}
-                            >
-                                See Our Work
-                            </Link>
-                        </div>
-                    </div>
-                </section>
+        {/* ══ HERO ══ */}
+        <section className="about-hero" ref={heroRef}>
+          <div className="hero-deco tl" />
+          <div className="hero-deco br" />
+          <div className="about-hero-inner">
+            <div className="about-breadcrumb">
+              <span>Home</span>
+              <span className="sep">/</span>
+              <span className="current">About</span>
             </div>
-        </MainLayout>
-    );
+            <div className="about-hero-title">
+              <div className="hero-line">
+                <span className="solid">About</span>
+                <span className="outline">Agency</span>
+              </div>
+            </div>
+            <p className="about-desc">
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+              doloremque laudantium totam rem veritatis quasi architecto.
+            </p>
+          </div>
+        </section>
+
+        {/* ══ TICKER: Our Story ══ */}
+        <Ticker label="Our Story" />
+
+        {/* ══ SECTION 2 ══ */}
+        <section className="section2" ref={section2Ref}>
+          <div className="s2-left">
+            <div className="s2-heading">
+              <span className="word solid-word">Jump Start</span>
+              <span className="word outline-word">Your Design</span>
+            </div>
+            <div className="s2-video-block">
+              <div className="play-btn">▶</div>
+              <span className="play-label">Video Introduction</span>
+            </div>
+            <p className="s2-body-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua uterum ad minim veniam quis occaecat proident.
+            </p>
+            <a href="#" className="learn-more">Learn More →</a>
+          </div>
+          <div className="s2-right">
+            <div className="s2-img-wrap" ref={imgRef}>
+              <img
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+                alt="Team working"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                  e.target.parentElement.style.background = "linear-gradient(135deg,#1a1660,#2d1b69)";
+                }}
+              />
+            </div>
+            <div className="info-cards" ref={cardsRef}>
+              {INFO_CARDS.map(({ label, arrow, desc }) => (
+                <div className="info-card" key={label}>
+                  <span className="card-label">{label}</span>
+                  <span className="card-desc">{desc}</span>
+                  <div className={`card-arrow${arrow === "↗" ? " diagonal" : ""}`}>→</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ TICKER: Our Team ══ */}
+        <Ticker label="Our Team" />
+
+        {/* ══ TEAM ══ */}
+        <section className="team-section" ref={teamRef}>
+          <div className="team-inner">
+            <div className="team-heading">
+              <h2>
+                <span className="th-solid">Meet Our</span>
+                <span className="th-outline">Expert Team</span>
+              </h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit luctus ullamcorper.</p>
+            </div>
+            <div className="team-grid">
+              {TEAM_MEMBERS.map(({ name, role, email, bg }) => (
+                <div className="team-card" key={name}>
+                  <div className="team-card-img">
+                    <img
+                      src="https://templatekit.jegtheme.com/creatv/wp-content/uploads/sites/419/2023/10/handsome-guy-in-casual-clothes-standing-with-arms-HWSQN2E-800x960.jpg"
+                      alt={name}
+                      style={{ background: bg }}
+                      onError={(e) => { e.target.style.display = "none"; e.target.parentElement.style.background = bg; }}
+                    />
+                    <div className="tc-overlay" />
+                  </div>
+                  <span className="team-card-name">{name}</span>
+                  <span className="team-card-role">{role}</span>
+                  <a href={`mailto:${email}`} className="team-card-email">{email}</a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ SKILLS & AWARDS ══ */}
+        <section className="skills-section" ref={skillsRef}>
+          <div className="skills-inner">
+            <div className="skills-title">
+              <span className="st-solid">Skills And</span>
+              <span className="st-outline">Awards</span>
+            </div>
+            <div className="awards-list">
+              {AWARDS.map(({ country, name, years }) => (
+                <div className="award-row" key={name}>
+                  <div>
+                    <div className="award-country">{country}</div>
+                    <div className="award-name">{name}</div>
+                  </div>
+                  <div className="award-year">{years}</div>
+                </div>
+              ))}
+            </div>
+            <div className="skill-bars">
+              {SKILLS.map(({ name, pct }) => (
+                <div className="skill-row" key={name}>
+                  <div className="skill-top">
+                    <span className="skill-name">{name}</span>
+                    <span className="skill-pct">{pct}%</span>
+                  </div>
+                  <div className="skill-track">
+                    <div className="skill-fill" style={{ width: `${pct}%` }} data-width={`${pct}%`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ TICKER: Why Choose Us ══ */}
+        <Ticker label="Why Choose Us" />
+
+        {/* ══ WHY CHOOSE US ══ */}
+        <section className="why-section" ref={whyRef}>
+          <div className="why-inner">
+            <div className="why-heading">
+              <h2>
+                <span className="wh-highlight">Why</span>
+                <span className="wh-solid">Must</span>
+                <span className="wh-outline">Choose Us</span>
+              </h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit luctus ullamcorper.</p>
+            </div>
+            <div className="why-grid">
+              {WHY_CARDS.map(({ num, title, desc }) => (
+                <div className="why-card" key={num}>
+                  <div className="why-card-num">{num}</div>
+                  <div className="why-card-title">{title}</div>
+                  <p className="why-card-desc">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ TICKER: FAQ's ══ */}
+        <Ticker label="FAQ's" />
+
+        {/* ══ FAQ ══ */}
+        <section className="faq-section" ref={faqRef}>
+          <div className="faq-inner">
+            <div className="faq-left">
+              <div className="faq-title">
+                <span className="ft-solid">Help &amp; FAQ</span>
+                <span className="ft-outline">Centers</span>
+              </div>
+              <p className="faq-desc">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua utenim ad minim veniam quis.
+              </p>
+              <a href="/contact" className="faq-contact-btn">Contact Us</a>
+            </div>
+            <div className="faq-list">
+              {FAQ_ITEMS.map(({ q, a }, i) => (
+                <div
+                  className={`faq-item${openFaq === i ? " open" : ""}`}
+                  key={i}
+                  onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
+                >
+                  <div className="faq-question">
+                    <span className="faq-q-text">{q}</span>
+                    <span className="faq-toggle">+</span>
+                  </div>
+                  <div className="faq-answer">
+                    <p>{a}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
+  );
 }
+
+About.layout = (page) => <MainLayout>{page}</MainLayout>;

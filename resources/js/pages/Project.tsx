@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import MainLayout from "@/layouts/MainLayout";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -17,15 +17,6 @@ const WORKS = [
   { img: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=700&q=80", title: "Industrial Design", tag: "Industrial",   desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.",           tall: false },
   { img: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=700&q=80", title: "Website Design",    tag: "Web Dev",      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.", tall: false },
   { img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80", title: "Graphic Design",    tag: "Graphics",     desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.",           tall: false },
-];
-const FAQ_ITEMS = [
-  { q: "1. What is a digital agency?",                         a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "2. What services does a digital agency offer?",        a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "3. How can a digital agency benefit my business?",      a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "4. How do digital agencies approach a new project?",    a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "5. What is the cost of digital agency services?",       a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "7. What sets a good digital agency apart from others?", a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
-  { q: "8. How do I ask for support?",                          a: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus consectetuer adipiscing elit." },
 ];
 
 // ─── Ticker (self-contained ref + GSAP) ──────────────────────────────────────
@@ -82,24 +73,12 @@ function Ticker({ label, variant = "primary" }) {
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
-export default function Contact() {
+export default function Project() {
   const heroRef  = useRef(null);
   const workRef  = useRef(null);
   const statsRef = useRef(null);
   const ctaRef   = useRef(null);
   const ctxRef   = useRef(null);
-  const faqRef   = useRef(null);
-  const [openFaq, setOpenFaq] = useState(0);
-
-  const [form, setForm] = useState({ name: "", email: "", subject: "", phone: "", message: "" });
-  const [sent, setSent] = useState(false);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Replace with your real submit logic (fetch, axios, Inertia post, etc.)
-    console.log("Form submitted:", form);
-    setSent(true);
-  };
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   useEffect(() => {
     const initGSAP = async () => {
@@ -472,224 +451,6 @@ export default function Contact() {
         .stat-row:hover .stat-arrow {
           background: #7c3aed; border-color: #7c3aed; color: #fff; transform: rotate(-45deg) scale(1.1);
         }
-/* ─── CONTACT SECTION ─── */
-  .contact-section {
-    background: #0e0c2e;
-    padding: 80px 60px;
-  }
-  .contact-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border: 1px solid rgba(124,58,237,0.18);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  /* ── LEFT PANEL ── */
-  .contact-info {
-    background: #13103a;
-    padding: 56px 48px;
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    border-right: 1px solid rgba(124,58,237,0.18);
-  }
-  .ci-item {}
-  .ci-label {
-    font-family: 'Barlow', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    color: rgba(255,255,255,0.35);
-    margin-bottom: 6px;
-  }
-  .ci-value {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 18px;
-    color: #fff;
-    letter-spacing: 0.2px;
-    line-height: 1.4;
-  }
-  .ci-value a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .ci-value a:hover { color: #7c3aed; }
-
-  /* Map embed */
-  .ci-map {
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid rgba(124,58,237,0.25);
-    flex-grow: 1;
-    min-height: 200px;
-  }
-  .ci-map iframe {
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    display: block;
-    border: none;
-    filter: invert(0.9) hue-rotate(195deg) saturate(0.6) brightness(0.85);
-  }
-
-  /* ── RIGHT PANEL ── */
-  .contact-form-panel {
-    background: #0e0c2e;
-    padding: 56px 48px;
-  }
-  .cf-heading {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-size: clamp(30px, 3.5vw, 50px);
-    color: #fff;
-    letter-spacing: -0.5px;
-    margin-bottom: 40px;
-    line-height: 1;
-  }
-  .cf-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 28px;
-  }
-  .cf-field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 28px;
-  }
-  .cf-field.full { grid-column: span 2; }
-  .cf-label {
-    font-family: 'Barlow', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.35);
-    margin-bottom: 10px;
-  }
-  .cf-input,
-  .cf-textarea {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    color: #fff;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    padding: 8px 0;
-    outline: none;
-    transition: border-color 0.25s;
-    width: 100%;
-  }
-  .cf-input::placeholder,
-  .cf-textarea::placeholder { color: rgba(255,255,255,0.2); }
-  .cf-input:focus,
-  .cf-textarea:focus { border-bottom-color: #7c3aed; }
-  .cf-textarea {
-    resize: none;
-    min-height: 90px;
-    line-height: 1.6;
-  }
-  .cf-submit {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: #fff;
-    background: #7c3aed;
-    border: none;
-    padding: 16px 0;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    margin-top: 6px;
-  }
-  .cf-submit:hover {
-    background: #6d28d9;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(124,58,237,0.45);
-  }
-  .cf-submit:active { transform: translateY(0); }
-
-  /* ── SUCCESS STATE ── */
-  .cf-success {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 40px 0;
-    text-align: center;
-  }
-  .cf-success-icon {
-    width: 52px; height: 52px;
-    background: rgba(124,58,237,0.15);
-    border: 1px solid rgba(124,58,237,0.4);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-  }
-  .cf-success-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 20px;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: #fff;
-  }
-  .cf-success-sub {
-    font-size: 13px; color: rgba(255,255,255,0.4); font-family: 'Barlow', sans-serif;
-  }
-    /* ─── FAQ ─── */
-        .faq-section { background: #080620; padding: 100px 60px; }
-        .faq-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 100px; align-items: start; }
-        .faq-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.88; margin-bottom: 28px; }
-        .faq-title .ft-solid { font-size: clamp(44px, 5.5vw, 78px); color: #fff; display: block; letter-spacing: -1px; }
-        .faq-title .ft-outline { font-size: clamp(44px, 5.5vw, 78px); color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.3); display: block; letter-spacing: -1px; }
-        .faq-desc { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); margin-bottom: 36px; max-width: 340px; }
-        .faq-contact-btn {
-          font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px;
-          text-transform: uppercase; letter-spacing: 3px; color: #fff; background: #7c3aed;
-          padding: 14px 30px; border-radius: 4px; text-decoration: none; display: inline-block;
-          transition: background 0.2s, transform 0.2s;
-        }
-        .faq-contact-btn:hover { background: #6d28d9; transform: translateY(-1px); }
-        .faq-list { display: flex; flex-direction: column; }
-        .faq-item { border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .faq-item:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
-        .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; cursor: pointer; gap: 20px; user-select: none; }
-        .faq-q-text { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 15px; color: #fff; flex: 1; }
-        .faq-toggle {
-          width: 32px; height: 32px; border-radius: 50%;
-          background: rgba(124,58,237,0.25); border: 1px solid rgba(124,58,237,0.4);
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0; font-size: 18px; color: #fff;
-          transition: background 0.25s, transform 0.3s; line-height: 1;
-        }
-        .faq-item.open .faq-toggle { background: #7c3aed; border-color: #7c3aed; transform: rotate(45deg); }
-        .faq-answer { overflow: hidden; max-height: 0; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0; }
-        .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 22px; }
-        .faq-answer p { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); max-width: 580px; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .contact-section { padding: 60px 24px; }
-    .contact-inner { grid-template-columns: 1fr; }
-    .contact-info {
-      border-right: none;
-      border-bottom: 1px solid rgba(124,58,237,0.18);
-      padding: 40px 28px;
-    }
-    .contact-form-panel { padding: 40px 28px; }
-    .cf-grid { grid-template-columns: 1fr; }
-    .cf-field.full { grid-column: span 1; }
-  }
 
         /* ─── RESPONSIVE ─── */
         @media (max-width: 900px) {
@@ -721,184 +482,102 @@ export default function Contact() {
             <div className="about-breadcrumb">
               <span>Home</span>
               <span className="sep">/</span>
-              <span className="current">Contact</span>
+              <span className="current">Project</span>
             </div>
             <div className="about-hero-title">
               <div className="hero-line">
-                <span className="solid">Get In</span>
-                <span className="outline">Touch</span>
+                <span className="solid">Awesome</span>
+                <span className="outline">Project</span>
               </div>
             </div>
             <p className="about-desc">
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-              laudantium totam rem veritatis quasi architecto.
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+              doloremque laudantium totam rem veritatis quasi architecto.
             </p>
           </div>
         </section>
 
         {/* ══ TICKER ══ */}
-        <Ticker label="Contact Us" />
+        <Ticker label="Latest Works" />
 
-        <section className="contact-section">
-        <div className="contact-inner">
-
-          {/* ── LEFT: Info + Map ── */}
-          <div className="contact-info">
-            <div className="ci-item">
-              <p className="ci-label">Our Address</p>
-              <p className="ci-value">Jl. Raya Puputan No.142,<br />Denpasar, Bali</p>
-            </div>
-
-            <div className="ci-item">
-              <p className="ci-label">Our Email</p>
-              <p className="ci-value">
-                <a href="mailto:support@domain.com">support@domain.com</a>
-              </p>
-            </div>
-
-            <div className="ci-item">
-              <p className="ci-label">Our Phone</p>
-              <p className="ci-value">
-                <a href="tel:+628111153568">(+62) 81 115 3568</a>
-              </p>
-            </div>
-
-            {/* Google Map — replace src with your embed URL */}
-            <div className="ci-map">
-              <iframe
-                title="Office Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.1!2d115.212!3d-8.670!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNDAnMTIuMCJTIDExNcKwMTInNDMuMiJF!5e0!3m2!1sen!2sid!4v1700000000000"
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-          </div>
-
-          {/* ── RIGHT: Form ── */}
-          <div className="contact-form-panel">
-            <h2 className="cf-heading">Leave Your Message</h2>
-
-            {sent ? (
-              <div className="cf-success">
-                <div className="cf-success-icon">✦</div>
-                <p className="cf-success-text">Message Sent!</p>
-                <p className="cf-success-sub">We'll get back to you shortly.</p>
+        {/* ══ OUR WORK ══ */}
+        <div className="section3-bg">
+          <section className="section3" ref={workRef}>
+            <div className="s3-header">
+              <div className="s3-title">
+                <span className="t-solid">Let's Check</span>
+                <span className="t-outline">Our Work</span>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate>
-                <div className="cf-grid">
-                  <div className="cf-field">
-                    <label className="cf-label">Your Name</label>
-                    <input
-                      className="cf-input"
-                      name="name"
-                      type="text"
-                      placeholder="John Doe"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="cf-field">
-                    <label className="cf-label">Your Email</label>
-                    <input
-                      className="cf-input"
-                      name="email"
-                      type="email"
-                      placeholder="john@example.com"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="cf-field">
-                    <label className="cf-label">Subject</label>
-                    <input
-                      className="cf-input"
-                      name="subject"
-                      type="text"
-                      placeholder="Project Inquiry"
-                      value={form.subject}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div className="cf-field">
-                    <label className="cf-label">Your Phone</label>
-                    <input
-                      className="cf-input"
-                      name="phone"
-                      type="tel"
-                      placeholder="+62 812 ..."
-                      value={form.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div className="cf-field full">
-                    <label className="cf-label">Message</label>
-                    <textarea
-                      className="cf-textarea"
-                      name="message"
-                      placeholder="Tell us about your project..."
-                      value={form.message}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="cf-field full">
-                    <button type="submit" className="cf-submit">
-                      Send Message
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ TICKER ══ */}
-      <Ticker label="FAQ's" />
-      {/* ══ FAQ ══ */}
-        <section className="faq-section" ref={faqRef}>
-          <div className="faq-inner">
-            <div className="faq-left">
-              <div className="faq-title">
-                <span className="ft-solid">Help &amp; FAQ</span>
-                <span className="ft-outline">Centers</span>
-              </div>
-              <p className="faq-desc">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua utenim ad minim veniam quis.
-              </p>
-              <a href="/contact" className="faq-contact-btn">Contact Us</a>
+              <a href="/project" className="s3-more-btn">More Works</a>
             </div>
-            <div className="faq-list">
-              {FAQ_ITEMS.map(({ q, a }, i) => (
-                <div
-                  className={`faq-item${openFaq === i ? " open" : ""}`}
-                  key={i}
-                  onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                >
-                  <div className="faq-question">
-                    <span className="faq-q-text">{q}</span>
-                    <span className="faq-toggle">+</span>
-                  </div>
-                  <div className="faq-answer">
-                    <p>{a}</p>
+
+            <div className="work-grid">
+              {WORKS.map(({ img, title, tag, desc, tall }) => (
+                <div className={`work-card${tall ? " tall" : ""}`} key={title}>
+                  <img
+                    src={img} alt={title} className="work-card-img"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.parentElement.style.background = "linear-gradient(135deg,#13103a,#1a1660)";
+                    }}
+                  />
+                  <div className="work-card-overlay">
+                    <div className="wc-row">
+                      <span className="wc-title">{title}</span>
+                      <span className="wc-tag">{tag}</span>
+                    </div>
+                    <p className="wc-desc">{desc}</p>
                   </div>
                 </div>
               ))}
             </div>
+          </section>
+        </div>
+
+        {/* ══ CTA ══ */}
+        <section className="section4" ref={ctaRef}>
+          <div className="cta-box">
+            <div className="cta-heading">
+              <span className="ch-solid">Have a Project?</span>
+              <span className="ch-outline">Let's Talk.</span>
+            </div>
+            <a href="/contact" className="cta-btn">Get Started</a>
+          </div>
+        </section>
+
+        {/* ══ SECONDARY TICKER ══ */}
+        <Ticker label="Funfact" variant="secondary" />
+
+        {/* ══ STATS ══ */}
+        <section className="stats-section" ref={statsRef}>
+          <div className="stats-inner">
+            {STATS.map(({ value, suffix, label, arrow }) => {
+              // Strip non-numeric chars for count-up (e.g. "4,218" → 4218, "812K" → null)
+              const raw = value.replace(/[^0-9]/g, "");
+              const canCount = raw && !value.match(/[A-Za-z]/);
+              return (
+                <div className="stat-row" key={label}>
+                  <div className="stat-value">
+                    <span
+                      className="stat-num"
+                      data-raw={canCount ? raw : ""}
+                    >
+                      {value}
+                    </span>
+                    <span className="stat-plus">{suffix}</span>
+                  </div>
+                  <span className="stat-label">{label}</span>
+                  <div className={`stat-arrow${arrow === "↗" ? " diag" : ""}`}>
+                    {arrow === "↗" ? "↗" : "→"}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>
     </>
   );
 }
-Contact.layout = (page) => <MainLayout>{page}</MainLayout>;
+
+Project.layout = (page) => <MainLayout>{page}</MainLayout>;

@@ -16,3 +16,6 @@ Route::get('/new', function () {
 Route::get('/contact', function () {
     return Inertia::render('Contact');
 });
+Route::get('/project', function () {
+    return Inertia::render('Project');
+});
