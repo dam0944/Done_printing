@@ -1,158 +1,244 @@
 import { useEffect, useRef, useState } from "react";
 import MainLayout from "@/layouts/MainLayout";
-// ─── Data constants ────────────────────────────────────────────────────────
+
+// ─── Info Cards ─────────────────────────────────────────
 
 const INFO_CARDS = [
   {
     label: "Who We Are",
     arrow: "↗",
-    desc: "We are a full-service creative agency built by designers, strategists, and storytellers who believe great design has the power to transform businesses.",
+    desc: "We are a creative digital agency focused on building modern brands, engaging user experiences, and scalable digital products for startups and growing businesses."
   },
   {
     label: "Our Vision",
     arrow: "→",
-    desc: "To become the most trusted creative partner for ambitious brands — delivering work that is bold, purposeful, and built to stand the test of time.",
+    desc: "Our vision is to help businesses grow through innovative design, powerful technology, and meaningful digital experiences that connect with people."
   },
   {
     label: "Our Mission",
     arrow: "→",
-    desc: "To craft meaningful design experiences that connect brands with their audiences, drive real growth, and make every interaction count.",
-  },
+    desc: "Our mission is to deliver high-quality digital solutions that combine creativity, strategy, and technology to help our clients succeed in the digital world."
+  }
 ];
+
+
+// ─── Team Members ───────────────────────────────────────
 
 const TEAM_MEMBERS = [
   {
     name: "Cartier Bresson",
     role: "CEO / Founder",
     email: "cartier@creatv.com",
-    bg: "#4fc3f7",
-    bio: "With over 15 years in the creative industry, Cartier founded the agency with one vision: design that drives results. He leads strategy and client relationships.",
+    bg: "#4fc3f7"
   },
   {
     name: "Viola Spencer",
     role: "Project Manager",
     email: "viola@creatv.com",
-    bg: "#f48fb1",
-    bio: "Viola keeps every project on time and on budget. Her meticulous planning and clear communication ensure seamless delivery from brief to final handoff.",
+    bg: "#f48fb1"
   },
   {
     name: "Carmen Hayes",
     role: "Motion Designer",
     email: "carmen@creatv.com",
-    bg: "#e0e0e0",
-    bio: "Carmen brings brands to life through animation and motion. Her work spans brand films, UI micro-interactions, and award-winning digital campaigns.",
+    bg: "#e0e0e0"
   },
   {
     name: "Monica Barker",
-    role: "Digital Manager",
+    role: "Digital Marketing Lead",
     email: "monica@creatv.com",
-    bg: "#90caf9",
-    bio: "Monica oversees all digital touchpoints — from website launches to social campaigns — ensuring every channel reflects the brand with precision and impact.",
-  },
+    bg: "#90caf9"
+  }
 ];
+
+
+// ─── Awards ─────────────────────────────────────────────
 
 const AWARDS = [
-  {
-    country: "Indonesia",
-    name: "Web Design Awards",
-    years: "2010 – 2011",
-    desc: "Recognized for outstanding web design innovation and user experience across Southeast Asia.",
-  },
-  {
-    country: "Australia",
-    name: "Mobile App Awards",
-    years: "2016 – 2017",
-    desc: "Awarded for best-in-class mobile application design, combining beautiful UI with seamless UX.",
-  },
-  {
-    country: "Japan",
-    name: "Animation Awards",
-    years: "2019 – 2020",
-    desc: "Honored for excellence in motion design and brand animation at the Asia Pacific Creative Summit.",
-  },
-  {
-    country: "USA",
-    name: "UX Innovation Award",
-    years: "2021 – 2022",
-    desc: "Celebrated for pushing the boundaries of user experience design with data-driven creative solutions.",
-  },
+  { country: "Indonesia", name: "Web Design Excellence Award", years: "2019 – 2020" },
+  { country: "Australia", name: "Best Mobile App Experience", years: "2020 – 2021" },
+  { country: "Japan", name: "Creative Animation Award", years: "2021 – 2022" },
+  { country: "USA", name: "UX Innovation Award", years: "2023 – 2024" }
 ];
 
+
+// ─── Skills ─────────────────────────────────────────────
+
 const SKILLS = [
-  { name: "UI/UX Design",      pct: 97 },
-  { name: "Web Design",        pct: 90 },
-  { name: "Digital Arts",      pct: 87 },
-  { name: "Content Creation",  pct: 83 },
+  { name: "UI / UX Design", pct: 97 },
+  { name: "Content Creation", pct: 83 },
   { name: "Digital Marketing", pct: 75 },
+  { name: "Web Design & Development", pct: 90 },
+  { name: "Digital Illustration", pct: 87 }
 ];
+
+
+// ─── Why Choose Us ──────────────────────────────────────
 
 const WHY_CARDS = [
   {
     num: "01.",
     title: "Hard Work",
-    desc: "We pour relentless effort into every project — no shortcuts, no half-measures. Every pixel, every word, and every decision is made with full commitment to excellence.",
+    desc: "Our team is committed to delivering high-quality work with attention to detail, ensuring every project reaches its full potential."
   },
   {
     num: "02.",
     title: "Transparency",
-    desc: "We believe great partnerships are built on honesty. You'll always know where your project stands, how your budget is being spent, and what results to expect.",
+    desc: "We believe in clear communication and complete transparency throughout every stage of the project."
   },
   {
     num: "03.",
-    title: "More Innovation",
-    desc: "We never recycle the same ideas. Our team actively explores emerging trends, tools, and technologies to keep your brand ahead of the curve and ahead of the competition.",
+    title: "Innovation",
+    desc: "We constantly explore new technologies and creative strategies to build modern digital experiences."
   },
   {
     num: "04.",
-    title: "Best Team Work",
-    desc: "Our designers, strategists, and developers work as one unit. That tight collaboration means fewer gaps, faster delivery, and a final product that feels truly cohesive.",
+    title: "Team Collaboration",
+    desc: "Our designers, developers, and strategists work closely together to deliver seamless and impactful results."
   },
   {
     num: "05.",
-    title: "Very Excellence",
-    desc: "We hold every deliverable to the highest standard before it reaches you. Our internal review process is rigorous because your brand deserves nothing less than perfect.",
+    title: "Excellence",
+    desc: "We focus on delivering exceptional quality in every product, ensuring our clients receive outstanding results."
   },
   {
     num: "06.",
     title: "Fast Growth",
-    desc: "We're not just here to make things look good — we're here to move the needle. Our work is designed to generate leads, build loyalty, and accelerate your business growth.",
-  },
+    desc: "We help businesses scale faster through effective digital strategies, branding, and modern technology."
+  }
 ];
+
+
+// ─── FAQ ────────────────────────────────────────────────
 
 const FAQ_ITEMS = [
   {
     q: "1. What is a digital agency?",
-    a: "A digital agency is a creative and strategic partner that helps businesses build their presence online and offline. We combine design, technology, and marketing to craft experiences that attract customers, communicate your brand's value, and drive measurable results.",
+    a: "A digital agency helps businesses build their online presence through services such as web design, branding, digital marketing, and product development."
   },
   {
     q: "2. What services does a digital agency offer?",
-    a: "We offer a full suite of creative services including brand identity design, UI/UX design, web design and development, mobile app design, motion graphics, content creation, and digital marketing strategy. Whether you need a complete brand overhaul or a single campaign, we have you covered.",
+    a: "Typical services include website design, UI/UX design, branding, digital marketing, social media management, and custom software development."
   },
   {
-    q: "3. How can a digital agency benefit my business?",
-    a: "Working with a digital agency gives you access to a team of specialists without the overhead of hiring in-house. We bring fresh perspective, proven processes, and cross-industry experience that helps you make smarter creative decisions, reach more customers, and grow faster.",
+    q: "3. How can a digital agency help my business?",
+    a: "A digital agency can help improve your brand visibility, attract more customers, and create digital products that improve user experience and engagement."
   },
   {
     q: "4. How do digital agencies approach a new project?",
-    a: "Every project starts with a deep discovery session where we learn about your brand, goals, audience, and competition. From there we develop a strategy, present creative concepts, refine based on your feedback, and deliver final assets — with clear milestones and communication throughout.",
+    a: "Most agencies follow a process that includes research, strategy planning, design, development, testing, and final delivery."
   },
   {
     q: "5. What is the cost of digital agency services?",
-    a: "Pricing depends on the scope and complexity of your project. We offer three transparent monthly plans — Silver, Gold, and Platinum — as well as custom quotes for larger engagements. We're happy to discuss your budget and find a solution that fits without compromising on quality.",
+    a: "Costs vary depending on project scope, complexity, and timeline. Most agencies provide customized quotes based on your specific needs."
   },
   {
-    q: "6. How long does a typical project take?",
-    a: "Timelines vary by project type. A brand identity typically takes 3–4 weeks, a website design 4–8 weeks, and a full brand and web package 8–12 weeks. We always agree on a timeline upfront and keep you informed at every stage so there are never any surprises.",
+    q: "6. What makes a good digital agency?",
+    a: "A strong portfolio, transparent communication, experienced team members, and a clear design process are key qualities of a reliable agency."
   },
   {
-    q: "7. What sets a good digital agency apart from others?",
-    a: "The best agencies combine creative excellence with strategic thinking and clear communication. We don't just make things look good — we make sure they work. Our process is collaborative, our standards are high, and we measure success by the real-world impact our work has on your business.",
-  },
-  {
-    q: "8. How do I ask for support?",
-    a: "You can reach our support team anytime via email, through the client portal, or by booking a call directly from your dashboard. All Gold and Platinum plan clients receive priority 24/7 support with a guaranteed response within 2 hours on business days.",
-  },
+    q: "7. How can I request support?",
+    a: "You can contact the agency through email, support forms, or scheduled consultations to discuss your project requirements."
+  }
 ];
+
+
+// ─── Reviews ────────────────────────────────────────────
+
+const REVIEWS = [
+  {
+    name: "Callie John",
+    role: "CEO, VScret",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    stars: 5,
+    quote: "Working with this team was an amazing experience. Their creativity, professionalism, and attention to detail helped transform our product into something truly exceptional."
+  },
+  {
+    name: "Marcus Lee",
+    role: "Founder, Designly",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    stars: 5,
+    quote: "The team delivered a beautifully designed website that exceeded our expectations. Communication was smooth and the results were outstanding."
+  },
+  {
+    name: "Sara Patel",
+    role: "Head of Product, Nexlabs",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    stars: 5,
+    quote: "Their design thinking and technical expertise helped us launch a modern digital product faster than we expected."
+  }
+];
+
+
+// ─── Services ───────────────────────────────────────────
+
+const SERVICES = [
+  {
+    name: "Perfect Sketching",
+    desc: "We create clear design sketches and visual concepts that help transform ideas into structured digital products."
+  },
+  {
+    name: "Digital Prototyping",
+    desc: "Interactive prototypes help visualize product flow and user experience before development begins."
+  },
+  {
+    name: "Design System",
+    desc: "We build scalable design systems that ensure consistency across your entire digital product."
+  },
+  {
+    name: "Design Concept",
+    desc: "Our creative team develops unique visual concepts that strengthen your brand identity."
+  },
+  {
+    name: "Brand Consultation",
+    desc: "We help businesses define their brand voice, strategy, and visual identity."
+  },
+  {
+    name: "Mobile App Design",
+    desc: "We design modern mobile applications focused on usability, performance, and visual appeal."
+  }
+];
+
+
+// ─── Blog Posts ─────────────────────────────────────────
+
+const BLOG_POSTS = [
+  {
+    id: 1,
+    tag: "DESIGN",
+    title: "The Importance of Design in Every Project",
+    excerpt: "Good design is more than aesthetics — it shapes user experience, builds trust, and improves how people interact with digital products.",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    href: "single-blog"
+  },
+  {
+    id: 2,
+    tag: "AI",
+    title: "How Artificial Intelligence is Transforming Modern Design",
+    excerpt: "Artificial intelligence is changing the way designers work by automating tasks and enabling smarter creative workflows.",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80",
+    href: "single-blog"
+  },
+  {
+    id: 3,
+    tag: "PRODUCT",
+    title: "Building a Design System for Modern Digital Products",
+    excerpt: "A strong design system helps teams build consistent, scalable, and user-friendly products across platforms.",
+    image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&q=80",
+    href: "single-blog"
+  },
+  {
+    id: 4,
+    tag: "WEBSITE",
+    title: "Why Prototyping Matters Before Website Development",
+    excerpt: "Prototyping helps identify usability problems early and ensures a smoother development process.",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+    href: "single-blog"
+  }
+];
+
+const TICKER_ITEMS = ["Our Story", "Our Team", "Why Choose Us", "FAQ's"];
+
 // ─── Reusable Ticker component (fixes duplicate-ref bug) ────────────────────
 function Ticker({ label, className = "ticker-wrap", trackClass = "ticker-track", itemClass = "ticker-item" }) {
   const wrapRef = useRef(null);
@@ -188,7 +274,7 @@ function Ticker({ label, className = "ticker-wrap", trackClass = "ticker-track",
 }
 
 // ─── Main component ──────────────────────────────────────────────────────────
-export default function About() {
+export default function Blog() {
   const heroRef     = useRef(null);
   const section2Ref = useRef(null);
   const imgRef      = useRef(null);
@@ -201,7 +287,8 @@ export default function About() {
   const teamRef     = useRef(null);
   const ctxRef      = useRef(null);
 
-  const [openFaq, setOpenFaq] = useState(0);
+  const [activeIdx, setActiveIdx]       = useState(1);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   useEffect(() => {
     const initGSAP = async () => {
@@ -343,21 +430,20 @@ export default function About() {
           color: #fff;
           overflow-x: hidden;
         }
-
-        /* ─── HERO ─── */
-        .about-hero {
-          min-height: 100vh;
+        /* ── HERO ── */
+        .hero {
+          min-height: 65vh;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          position: relative;
-          background: radial-gradient(ellipse 90% 70% at 50% 40%, #1a1660 0%, #0e0c2e 68%);
           text-align: center;
-          padding: 120px 60px 80px;
+          padding: 130px 40px 80px;
+          position: relative;
+          background: radial-gradient(ellipse 90% 70% at 50% 30%, #1a1660 0%, #0e0c2e 68%);
           overflow: hidden;
         }
-        .about-hero::before {
+        .hero::before {
           content: '';
           position: absolute;
           inset: 0;
@@ -367,14 +453,13 @@ export default function About() {
           background-size: 60px 60px;
           pointer-events: none;
         }
-        .about-hero-inner {
+        .hero-inner {
           position: relative;
           z-index: 1;
-          max-width: 1100px;
-          width: 100%;
+          max-width: 860px;
           margin: 0 auto;
         }
-        .about-breadcrumb {
+        .breadcrumb {
           display: inline-flex;
           align-items: center;
           gap: 8px;
@@ -384,52 +469,43 @@ export default function About() {
           text-transform: uppercase;
           letter-spacing: 3px;
           color: rgba(255,255,255,0.35);
-          margin-bottom: 32px;
+          margin-bottom: 28px;
         }
-        .about-breadcrumb span.sep { color: #7c3aed; }
-        .about-breadcrumb span.current { color: rgba(255,255,255,0.65); }
-        .about-hero-title {
+        .breadcrumb .sep { color: #7c3aed; }
+        .breadcrumb .cur { color: rgba(255,255,255,0.65); }
+
+        .hero-title {
           font-family: 'Barlow Condensed', sans-serif;
           font-weight: 900;
+          font-size: clamp(36px, 6vw, 72px);
           text-transform: uppercase;
-          line-height: 0.88;
-          margin-bottom: 36px;
+          line-height: 1;
+          letter-spacing: -1px;
+          color: #fff;
+          margin-bottom: 24px;
         }
-        .hero-line {
+
+        .hero-meta {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 24px;
-          flex-wrap: wrap;
+          gap: 20px;
+          font-size: 13px;
+          color: rgba(255,255,255,0.4);
         }
-        .hero-line span.solid {
-          font-size: clamp(80px, 12vw, 170px);
+        .hero-meta span { display: flex; align-items: center; gap: 6px; }
+        .meta-dot { width: 4px; height: 4px; background: #7c3aed; border-radius: 50%; }
+        .hero-meta .tag-pill {
+          background: #7c3aed;
           color: #fff;
-          letter-spacing: -3px;
-          line-height: 0.88;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          padding: 4px 12px;
+          border-radius: 20px;
         }
-        .hero-line span.outline {
-          font-size: clamp(80px, 12vw, 170px);
-          color: transparent;
-          -webkit-text-stroke: 2.5px rgba(255,255,255,0.38);
-          letter-spacing: -3px;
-          line-height: 0.88;
-        }
-        .about-desc {
-          font-size: 16px;
-          line-height: 1.75;
-          color: rgba(255,255,255,0.55);
-          max-width: 560px;
-          margin: 0 auto;
-        }
-        .hero-deco {
-          position: absolute;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        .hero-deco.tl { width: 180px; height: 180px; top: -40px; left: -40px; }
-        .hero-deco.br { width: 240px; height: 240px; bottom: 40px; right: -40px; }
 
         /* ─── TICKER ─── */
         .ticker-wrap {
@@ -799,6 +875,198 @@ export default function About() {
         .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 22px; }
         .faq-answer p { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); max-width: 580px; }
 
+        /* ─── SERVICES ─── */
+        .services-outer { background: #0c0a2e; padding: 0 60px 120px; }
+        .services-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 80px; align-items: start; }
+        .srv-left { position: sticky; top: 120px; padding-top: 8px; }
+        .srv-heading { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.9; margin-bottom: 28px; }
+        .srv-heading .sh-solid { font-size: clamp(48px, 5.5vw, 80px); color: #fff; display: block; letter-spacing: -1px; }
+        .srv-heading .sh-outline { font-size: clamp(48px, 5.5vw, 80px); color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.28); display: block; letter-spacing: -1px; }
+        .srv-desc { font-size: 15px; line-height: 1.8; color: rgba(255,255,255,0.45); max-width: 300px; }
+        .srv-right { display: flex; flex-direction: column; }
+        .srv-row {
+          display: grid; grid-template-columns: 52px 1fr 32px;
+          align-items: start; gap: 20px; padding: 28px 20px;
+          border-bottom: 1px solid rgba(255,255,255,0.07); cursor: pointer;
+          border-radius: 10px;
+          transition: background 0.3s ease, padding-left 0.3s ease;
+        }
+        .srv-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.07); }
+        .srv-row:hover { background: rgba(124,58,237,0.08); padding-left: 28px; }
+        .srv-row.active { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); padding-left: 28px; }
+        .srv-row.active + .srv-row { border-top-color: rgba(124,58,237,0.2); }
+        .srv-icon {
+          width: 44px; height: 44px;
+          background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25);
+          border-radius: 10px; display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; margin-top: 2px; transition: background 0.3s, border-color 0.3s;
+        }
+        .srv-row:hover .srv-icon, .srv-row.active .srv-icon { background: rgba(124,58,237,0.25); border-color: rgba(124,58,237,0.5); }
+        .srv-icon svg { width: 22px; height: 22px; stroke: #a78bfa; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s; }
+        .srv-row:hover .srv-icon svg, .srv-row.active .srv-icon svg { stroke: #c4b5fd; }
+        .srv-text { display: flex; flex-direction: column; gap: 6px; }
+        .srv-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; color: rgba(255,255,255,0.75); transition: color 0.3s; line-height: 1; }
+        .srv-row:hover .srv-name, .srv-row.active .srv-name { color: #fff; }
+        .srv-body { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.35); transition: color 0.3s; }
+        .srv-row:hover .srv-body, .srv-row.active .srv-body { color: rgba(255,255,255,0.55); }
+        .srv-arrow {
+          width: 30px; height: 30px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 13px; color: rgba(255,255,255,0.25); flex-shrink: 0; margin-top: 4px;
+          transition: background 0.3s, border-color 0.3s, color 0.3s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .srv-row:hover .srv-arrow, .srv-row.active .srv-arrow { background: #7c3aed; border-color: #7c3aed; color: #fff; transform: rotate(-45deg) scale(1.1); }
+        .srv-cta-card { background: #7c3aed; border-radius: 12px; padding: 44px 40px; margin-top: 28px; position: relative; overflow: hidden; }
+        .srv-cta-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%); pointer-events: none; }
+        .srv-cta-text { font-family: 'Barlow', sans-serif; font-weight: 500; font-size: 20px; line-height: 1.5; color: rgba(255,255,255,0.9); max-width: 280px; margin-bottom: 28px; position: relative; }
+        .srv-cta-btn {
+          font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px;
+          text-transform: uppercase; letter-spacing: 2.5px; color: #fff; background: transparent;
+          border: 1.5px solid rgba(255,255,255,0.55); padding: 11px 26px; border-radius: 5px;
+          text-decoration: none; display: inline-block; transition: background 0.2s, border-color 0.2s;
+        }
+        .srv-cta-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.85); }
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .blog-section {
+          background: #0e0c2e;
+          font-family: 'Barlow', sans-serif;
+          padding: 80px 60px 100px;
+          min-height: 100vh;
+        }
+
+        .blog-grid {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px 36px;
+        }
+
+        .blog-card {
+          display: flex;
+          flex-direction: column;
+          cursor: pointer;
+        }
+
+        .blog-card-img-wrap {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16/10;
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 22px;
+        }
+
+        .blog-card-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.5s ease;
+        }
+
+        .blog-card:hover .blog-card-img-wrap img {
+          transform: scale(1.05);
+        }
+
+        .blog-tag {
+          position: absolute;
+          bottom: 14px;
+          left: 14px;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: #fff;
+          background: #7c3aed;
+          padding: 5px 14px;
+          border-radius: 20px;
+        }
+
+        .blog-card-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 800;
+          font-size: clamp(20px, 2.2vw, 26px);
+          line-height: 1.2;
+          color: #fff;
+          margin-bottom: 14px;
+          transition: color 0.2s;
+        }
+
+        .blog-card:hover .blog-card-title {
+          color: #a78bfa;
+        }
+
+        .blog-card-excerpt {
+          font-size: 14px;
+          line-height: 1.75;
+          color: rgba(255,255,255,0.45);
+          margin-bottom: 20px;
+          flex: 1;
+        }
+
+        .blog-read-more {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 2.5px;
+          color: rgba(255,255,255,0.7);
+          text-decoration: none;
+          border: none;
+          background: none;
+          cursor: pointer;
+          padding: 0;
+          transition: color 0.2s;
+        }
+
+        .blog-read-more:hover {
+          color: #a78bfa;
+        }
+
+        .read-arrow {
+          font-size: 14px;
+          transition: transform 0.2s;
+        }
+
+        .blog-read-more:hover .read-arrow {
+          transform: translateX(4px);
+        }
+
+        .load-more-wrap {
+          max-width: 1200px;
+          margin: 60px auto 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .load-more-btn {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          color: #fff;
+          background: #7c3aed;
+          border: none;
+          padding: 16px 52px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.2s;
+        }
+
+        .load-more-btn:hover {
+          background: #6d28d9;
+          transform: translateY(-2px);
+        }
+
         /* ─── RESPONSIVE ─── */
         @media (max-width: 900px) {
           .about-hero { padding: 100px 24px 60px; }
@@ -833,226 +1101,82 @@ export default function About() {
           .why-grid { grid-template-columns: 1fr; }
         }
       `}</style>
-      <div className="page-wrap">
-        {/* ══ HERO ══ */}
-        <section className="about-hero" ref={heroRef}>
-            <div className="hero-deco tl" />
-            <div className="hero-deco br" />
-            <div className="about-hero-inner">
-            <div className="about-breadcrumb">
+
+     <div className="page-wrap">
+    {/* HERO */}
+        <section className="hero">
+            <div className="hero-inner">
+            <div className="breadcrumb">
                 <span>Home</span>
                 <span className="sep">/</span>
-                <span className="current">About</span>
+                <span>Blog</span>
+                <span className="sep">/</span>
+                <span className="cur">Design</span>
             </div>
-            <div className="about-hero-title">
-                <div className="hero-line">
-                <span className="solid">About</span>
-                <span className="outline">Agency</span>
-                </div>
-            </div>
+            <h1 className="hero-title">
+                The Role of Design in Creating Impactful <br />Digital Experiences
+            </h1>
             <p className="about-desc">
-                We are a passionate team of designers, strategists, and creative thinkers
-                dedicated to building brands that are bold, meaningful, and built to last.
-                Get to know the people and principles behind every project we deliver.
+                Discover insights, design strategies, and creative ideas that help
+                businesses build better digital products and stronger brands.
             </p>
             </div>
         </section>
 
-        {/* ══ TICKER: Our Story ══ */}
-        <Ticker label="Our Story" />
 
-        {/* ══ SECTION 2 ══ */}
-        <section className="section2" ref={section2Ref}>
-            <div className="s2-left">
-            <div className="s2-heading">
-                <span className="word solid-word">Jump Start</span>
-                <span className="word outline-word">Your Design</span>
+
+    {/* ══ TICKER ══ */}
+    <Ticker label="Latest Blog" />
+
+
+    {/* ══ BLOG SECTION ══ */}
+    <section className="blog-section">
+
+        <div className="blog-grid">
+
+        {BLOG_POSTS.slice(0, visibleCount).map((post) => (
+
+            <article className="blog-card" key={post.id}>
+
+            <div className="blog-card-img-wrap">
+                <img src={post.image} alt={post.title} />
+                <span className="blog-tag">{post.tag}</span>
             </div>
-            <div className="s2-video-block">
-                <div className="play-btn">▶</div>
-                <span className="play-label">Watch Our Story</span>
-            </div>
-            <p className="s2-body-text">
-                Founded on the belief that great design changes everything, we have spent over
-                a decade helping brands across industries find their voice, sharpen their identity,
-                and connect with the audiences that matter most. Every project we take on is a
-                chance to create something that genuinely moves people — and moves the needle
-                for your business.
+
+            <h3 className="blog-card-title">{post.title}</h3>
+
+            <p className="blog-card-excerpt">
+                {post.excerpt}
             </p>
-            <a href="/contact" className="learn-more">Work With Us →</a>
-            </div>
-            <div className="s2-right">
-            <div className="s2-img-wrap" ref={imgRef}>
-                <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                alt="Our team collaborating"
-                onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.parentElement.style.background = "linear-gradient(135deg,#1a1660,#2d1b69)";
-                }}
-                />
-            </div>
-            <div className="info-cards" ref={cardsRef}>
-                {INFO_CARDS.map(({ label, arrow, desc }) => (
-                <div className="info-card" key={label}>
-                    <span className="card-label">{label}</span>
-                    <span className="card-desc">{desc}</span>
-                    <div className={`card-arrow${arrow === "↗" ? " diagonal" : ""}`}>→</div>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
 
-        {/* ══ TICKER: Our Team ══ */}
-        <Ticker label="Our Team" />
+            <a href={post.href} className="blog-read-more">
+                Read More <span className="read-arrow">→</span>
+            </a>
 
-        {/* ══ TEAM ══ */}
-        <section className="team-section" ref={teamRef}>
-            <div className="team-inner">
-            <div className="team-heading">
-                <h2>
-                <span className="th-solid">Meet Our</span>
-                <span className="th-outline">Expert Team</span>
-                </h2>
-                <p>
-                Behind every great project is a team that cares deeply about the craft.
-                Meet the talented individuals who bring creativity, strategy, and dedication
-                to everything we build.
-                </p>
-            </div>
-            <div className="team-grid">
-                {TEAM_MEMBERS.map(({ name, role, email, bg }) => (
-                <div className="team-card" key={name}>
-                    <div className="team-card-img">
-                    <img
-                        src="https://templatekit.jegtheme.com/creatv/wp-content/uploads/sites/419/2023/10/handsome-guy-in-casual-clothes-standing-with-arms-HWSQN2E-800x960.jpg"
-                        alt={name}
-                        style={{ background: bg }}
-                        onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.parentElement.style.background = bg;
-                        }}
-                    />
-                    <div className="tc-overlay" />
-                    </div>
-                    <span className="team-card-name">{name}</span>
-                    <span className="team-card-role">{role}</span>
-                    <a href={`mailto:${email}`} className="team-card-email">{email}</a>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
+            </article>
 
-        {/* ══ SKILLS & AWARDS ══ */}
-        <section className="skills-section" ref={skillsRef}>
-            <div className="skills-inner">
-            <div className="skills-title">
-                <span className="st-solid">Skills And</span>
-                <span className="st-outline">Awards</span>
-            </div>
-            <div className="awards-list">
-                {AWARDS.map(({ country, name, years }) => (
-                <div className="award-row" key={name}>
-                    <div>
-                    <div className="award-country">{country}</div>
-                    <div className="award-name">{name}</div>
-                    </div>
-                    <div className="award-year">{years}</div>
-                </div>
-                ))}
-            </div>
-            <div className="skill-bars">
-                {SKILLS.map(({ name, pct }) => (
-                <div className="skill-row" key={name}>
-                    <div className="skill-top">
-                    <span className="skill-name">{name}</span>
-                    <span className="skill-pct">{pct}%</span>
-                    </div>
-                    <div className="skill-track">
-                    <div
-                        className="skill-fill"
-                        style={{ width: `${pct}%` }}
-                        data-width={`${pct}%`}
-                    />
-                    </div>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
-
-        {/* ══ TICKER: Why Choose Us ══ */}
-        <Ticker label="Why Choose Us" />
-
-        {/* ══ WHY CHOOSE US ══ */}
-        <section className="why-section" ref={whyRef}>
-            <div className="why-inner">
-            <div className="why-heading">
-                <h2>
-                <span className="wh-highlight">Why</span>
-                <span className="wh-solid">Must</span>
-                <span className="wh-outline">Choose Us</span>
-                </h2>
-                <p>
-                There are a lot of agencies out there. Here is what makes us different —
-                and why our clients keep coming back project after project.
-                </p>
-            </div>
-            <div className="why-grid">
-                {WHY_CARDS.map(({ num, title, desc }) => (
-                <div className="why-card" key={num}>
-                    <div className="why-card-num">{num}</div>
-                    <div className="why-card-title">{title}</div>
-                    <p className="why-card-desc">{desc}</p>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
-
-        {/* ══ TICKER: FAQ's ══ */}
-        <Ticker label="FAQ's" />
-
-        {/* ══ FAQ ══ */}
-        <section className="faq-section" ref={faqRef}>
-            <div className="faq-inner">
-            <div className="faq-left">
-                <div className="faq-title">
-                <span className="ft-solid">Help &amp; FAQ</span>
-                <span className="ft-outline">Centers</span>
-                </div>
-                <p className="faq-desc">
-                Have questions about working with us? We have answered the most common ones
-                below. If you don't find what you're looking for, our team is always happy
-                to jump on a call and talk through your specific needs.
-                </p>
-                <a href="/contact" className="faq-contact-btn">Contact Us</a>
-            </div>
-            <div className="faq-list">
-                {FAQ_ITEMS.map(({ q, a }, i) => (
-                <div
-                    className={`faq-item${openFaq === i ? " open" : ""}`}
-                    key={i}
-                    onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                >
-                    <div className="faq-question">
-                    <span className="faq-q-text">{q}</span>
-                    <span className="faq-toggle">+</span>
-                    </div>
-                    <div className="faq-answer">
-                    <p>{a}</p>
-                    </div>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
+        ))}
 
         </div>
+
+
+        {/* LOAD MORE BUTTON */}
+        {visibleCount < BLOG_POSTS.length && (
+        <div className="load-more-wrap">
+            <button
+            className="load-more-btn"
+            onClick={() => setVisibleCount((v) => v + 4)}
+            >
+            Load More
+            </button>
+        </div>
+        )}
+
+    </section>
+
+    </div>
     </>
   );
 }
 
-About.layout = (page) => <MainLayout>{page}</MainLayout>;
+Blog.layout = (page) => <MainLayout>{page}</MainLayout>;

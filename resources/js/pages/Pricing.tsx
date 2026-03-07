@@ -1,80 +1,105 @@
 import { useEffect, useRef, useState } from "react";
 import MainLayout from "@/layouts/MainLayout";
-// ─── Data constants ────────────────────────────────────────────────────────
+
+// ─── Data constants ───────────────────────────────────────────────────────────
 
 const INFO_CARDS = [
   {
     label: "Who We Are",
     arrow: "↗",
-    desc: "We are a full-service creative agency built by designers, strategists, and storytellers who believe great design has the power to transform businesses.",
+    desc:  "We are a full-service creative agency built by designers, strategists, and storytellers who believe great design has the power to transform businesses.",
   },
   {
     label: "Our Vision",
     arrow: "→",
-    desc: "To become the most trusted creative partner for ambitious brands — delivering work that is bold, purposeful, and built to stand the test of time.",
+    desc:  "To become the most trusted creative partner for ambitious brands — delivering work that is bold, purposeful, and built to stand the test of time.",
   },
   {
     label: "Our Mission",
     arrow: "→",
-    desc: "To craft meaningful design experiences that connect brands with their audiences, drive real growth, and make every interaction count.",
+    desc:  "To craft meaningful design experiences that connect brands with their audiences, drive real growth, and make every interaction count.",
   },
 ];
 
 const TEAM_MEMBERS = [
   {
-    name: "Cartier Bresson",
-    role: "CEO / Founder",
+    name:  "Cartier Bresson",
+    role:  "CEO / Founder",
     email: "cartier@creatv.com",
-    bg: "#4fc3f7",
-    bio: "With over 15 years in the creative industry, Cartier founded the agency with one vision: design that drives results. He leads strategy and client relationships.",
+    bg:    "#4fc3f7",
+    bio:   "With over 15 years in the creative industry, Cartier founded the agency with one vision: design that drives results. He leads strategy and client relationships.",
   },
   {
-    name: "Viola Spencer",
-    role: "Project Manager",
+    name:  "Viola Spencer",
+    role:  "Project Manager",
     email: "viola@creatv.com",
-    bg: "#f48fb1",
-    bio: "Viola keeps every project on time and on budget. Her meticulous planning and clear communication ensure seamless delivery from brief to final handoff.",
+    bg:    "#f48fb1",
+    bio:   "Viola keeps every project on time and on budget. Her meticulous planning and clear communication ensure seamless delivery from brief to final handoff.",
   },
   {
-    name: "Carmen Hayes",
-    role: "Motion Designer",
+    name:  "Carmen Hayes",
+    role:  "Motion Designer",
     email: "carmen@creatv.com",
-    bg: "#e0e0e0",
-    bio: "Carmen brings brands to life through animation and motion. Her work spans brand films, UI micro-interactions, and award-winning digital campaigns.",
+    bg:    "#e0e0e0",
+    bio:   "Carmen brings brands to life through animation and motion. Her work spans brand films, UI micro-interactions, and award-winning digital campaigns.",
   },
   {
-    name: "Monica Barker",
-    role: "Digital Manager",
+    name:  "Monica Barker",
+    role:  "Digital Manager",
     email: "monica@creatv.com",
-    bg: "#90caf9",
-    bio: "Monica oversees all digital touchpoints — from website launches to social campaigns — ensuring every channel reflects the brand with precision and impact.",
+    bg:    "#90caf9",
+    bio:   "Monica oversees all digital touchpoints — from website launches to social campaigns — ensuring every channel reflects the brand with precision and impact.",
+  },
+];
+
+const REVIEWS = [
+  {
+    name:   "Callie John",
+    role:   "CEO, VScret",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    stars:  5,
+    quote:  "Working with this agency transformed our brand completely. Their attention to detail, creative thinking, and ability to translate our vision into stunning visuals exceeded every expectation we had.",
+  },
+  {
+    name:   "Marcus Lee",
+    role:   "Founder, Designly",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    stars:  5,
+    quote:  "From the first consultation to the final delivery, the process was smooth, transparent, and genuinely exciting. They don't just design — they solve real business problems with great design.",
+  },
+  {
+    name:   "Sara Patel",
+    role:   "Head of Product, Nexlabs",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    stars:  5,
+    quote:  "Our product's user satisfaction scores jumped 40% after the redesign. The team deeply understood our users' needs and crafted an experience that feels effortless and truly delightful.",
   },
 ];
 
 const AWARDS = [
   {
     country: "Indonesia",
-    name: "Web Design Awards",
-    years: "2010 – 2011",
-    desc: "Recognized for outstanding web design innovation and user experience across Southeast Asia.",
+    name:    "Web Design Awards",
+    years:   "2010 – 2011",
+    desc:    "Recognized for outstanding web design innovation and user experience across Southeast Asia.",
   },
   {
     country: "Australia",
-    name: "Mobile App Awards",
-    years: "2016 – 2017",
-    desc: "Awarded for best-in-class mobile application design, combining beautiful UI with seamless UX.",
+    name:    "Mobile App Awards",
+    years:   "2016 – 2017",
+    desc:    "Awarded for best-in-class mobile application design, combining beautiful UI with seamless UX.",
   },
   {
     country: "Japan",
-    name: "Animation Awards",
-    years: "2019 – 2020",
-    desc: "Honored for excellence in motion design and brand animation at the Asia Pacific Creative Summit.",
+    name:    "Animation Awards",
+    years:   "2019 – 2020",
+    desc:    "Honored for excellence in motion design and brand animation at the Asia Pacific Creative Summit.",
   },
   {
     country: "USA",
-    name: "UX Innovation Award",
-    years: "2021 – 2022",
-    desc: "Celebrated for pushing the boundaries of user experience design with data-driven creative solutions.",
+    name:    "UX Innovation Award",
+    years:   "2021 – 2022",
+    desc:    "Celebrated for pushing the boundaries of user experience design with data-driven creative solutions.",
   },
 ];
 
@@ -88,34 +113,34 @@ const SKILLS = [
 
 const WHY_CARDS = [
   {
-    num: "01.",
+    num:   "01.",
     title: "Hard Work",
-    desc: "We pour relentless effort into every project — no shortcuts, no half-measures. Every pixel, every word, and every decision is made with full commitment to excellence.",
+    desc:  "We pour relentless effort into every project — no shortcuts, no half-measures. Every pixel, every word, and every decision is made with full commitment to excellence.",
   },
   {
-    num: "02.",
+    num:   "02.",
     title: "Transparency",
-    desc: "We believe great partnerships are built on honesty. You'll always know where your project stands, how your budget is being spent, and what results to expect.",
+    desc:  "We believe great partnerships are built on honesty. You will always know where your project stands, how your budget is being spent, and what results to expect.",
   },
   {
-    num: "03.",
+    num:   "03.",
     title: "More Innovation",
-    desc: "We never recycle the same ideas. Our team actively explores emerging trends, tools, and technologies to keep your brand ahead of the curve and ahead of the competition.",
+    desc:  "We never recycle the same ideas. Our team actively explores emerging trends, tools, and technologies to keep your brand ahead of the curve and ahead of the competition.",
   },
   {
-    num: "04.",
+    num:   "04.",
     title: "Best Team Work",
-    desc: "Our designers, strategists, and developers work as one unit. That tight collaboration means fewer gaps, faster delivery, and a final product that feels truly cohesive.",
+    desc:  "Our designers, strategists, and developers work as one unit. That tight collaboration means fewer gaps, faster delivery, and a final product that feels truly cohesive.",
   },
   {
-    num: "05.",
+    num:   "05.",
     title: "Very Excellence",
-    desc: "We hold every deliverable to the highest standard before it reaches you. Our internal review process is rigorous because your brand deserves nothing less than perfect.",
+    desc:  "We hold every deliverable to the highest standard before it reaches you. Our internal review process is rigorous because your brand deserves nothing less than perfect.",
   },
   {
-    num: "06.",
+    num:   "06.",
     title: "Fast Growth",
-    desc: "We're not just here to make things look good — we're here to move the needle. Our work is designed to generate leads, build loyalty, and accelerate your business growth.",
+    desc:  "We are not just here to make things look good — we are here to move the needle. Our work is designed to generate leads, build loyalty, and accelerate your business growth.",
   },
 ];
 
@@ -126,7 +151,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "2. What services does a digital agency offer?",
-    a: "We offer a full suite of creative services including brand identity design, UI/UX design, web design and development, mobile app design, motion graphics, content creation, and digital marketing strategy. Whether you need a complete brand overhaul or a single campaign, we have you covered.",
+    a: "We offer a full suite of creative services including brand identity design, UI/UX design, web design and development, mobile app design, motion graphics, content creation, and digital marketing strategy. Whether you need a complete brand overhaul or a single focused campaign, we have you covered.",
   },
   {
     q: "3. How can a digital agency benefit my business?",
@@ -134,11 +159,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "4. How do digital agencies approach a new project?",
-    a: "Every project starts with a deep discovery session where we learn about your brand, goals, audience, and competition. From there we develop a strategy, present creative concepts, refine based on your feedback, and deliver final assets — with clear milestones and communication throughout.",
+    a: "Every project starts with a deep discovery session where we learn about your brand, goals, audience, and competition. From there we develop a strategy, present creative concepts, refine based on your feedback, and deliver final assets — with clear milestones and open communication throughout.",
   },
   {
     q: "5. What is the cost of digital agency services?",
-    a: "Pricing depends on the scope and complexity of your project. We offer three transparent monthly plans — Silver, Gold, and Platinum — as well as custom quotes for larger engagements. We're happy to discuss your budget and find a solution that fits without compromising on quality.",
+    a: "Pricing depends on the scope and complexity of your project. We offer three transparent monthly plans — Silver, Gold, and Platinum — as well as custom quotes for larger engagements. We are happy to discuss your budget and find a solution that fits without compromising on quality.",
   },
   {
     q: "6. How long does a typical project take?",
@@ -146,13 +171,52 @@ const FAQ_ITEMS = [
   },
   {
     q: "7. What sets a good digital agency apart from others?",
-    a: "The best agencies combine creative excellence with strategic thinking and clear communication. We don't just make things look good — we make sure they work. Our process is collaborative, our standards are high, and we measure success by the real-world impact our work has on your business.",
+    a: "The best agencies combine creative excellence with strategic thinking and clear communication. We do not just make things look good — we make sure they work. Our process is collaborative, our standards are high, and we measure success by the real-world impact our work has on your business.",
   },
   {
     q: "8. How do I ask for support?",
-    a: "You can reach our support team anytime via email, through the client portal, or by booking a call directly from your dashboard. All Gold and Platinum plan clients receive priority 24/7 support with a guaranteed response within 2 hours on business days.",
+    a: "You can reach our team anytime via email at hello@creatv.agency, through the client portal, or by booking a call directly. All Gold and Platinum plan clients receive priority 24/7 support with a guaranteed response within 2 hours on business days.",
   },
 ];
+
+const PLANS = [
+  {
+    tier:     "Silver",
+    amount:   "$49.99",
+    features: [
+      "Brand Identity Design",
+      "Up to 3 Page Web Design",
+      "Social Media Kit",
+      "2 Revision Rounds",
+      "Email Support",
+    ],
+  },
+  {
+    tier:     "Gold",
+    amount:   "$59.99",
+    features: [
+      "Full Branding Package",
+      "Up to 8 Page Web Design",
+      "Copywriting & Content",
+      "Unlimited Revisions",
+      "Priority 24/7 Support",
+    ],
+  },
+  {
+    tier:     "Platinum",
+    amount:   "$79.99",
+    features: [
+      "Complete Brand System",
+      "Custom Web Development",
+      "Content Strategy",
+      "Dedicated Designer",
+      "Full Online 24/7 Support",
+    ],
+  },
+];
+
+const TICKER_ITEMS = ["Our Story", "Our Team", "Why Choose Us", "FAQ's"];
+
 // ─── Reusable Ticker component (fixes duplicate-ref bug) ────────────────────
 function Ticker({ label, className = "ticker-wrap", trackClass = "ticker-track", itemClass = "ticker-item" }) {
   const wrapRef = useRef(null);
@@ -188,7 +252,7 @@ function Ticker({ label, className = "ticker-wrap", trackClass = "ticker-track",
 }
 
 // ─── Main component ──────────────────────────────────────────────────────────
-export default function About() {
+export default function Pricing() {
   const heroRef     = useRef(null);
   const section2Ref = useRef(null);
   const imgRef      = useRef(null);
@@ -201,6 +265,10 @@ export default function About() {
   const teamRef     = useRef(null);
   const ctxRef      = useRef(null);
 
+
+    const [activeIdx, setActiveIdx]       = useState(1);
+    const [activeReview, setActiveReview] = useState(0);
+    const r = REVIEWS[activeReview];
   const [openFaq, setOpenFaq] = useState(0);
 
   useEffect(() => {
@@ -798,7 +866,62 @@ export default function About() {
         .faq-answer { overflow: hidden; max-height: 0; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0; }
         .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 22px; }
         .faq-answer p { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.45); max-width: 580px; }
-
+        /* ─── PRICING ─── */
+        .pricing-outer { background: #0e0c2e; padding: 100px 60px 80px; }
+        .pricing-header { text-align: center; margin-bottom: 60px; }
+        .pricing-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; font-size: clamp(42px, 5.5vw, 76px); line-height: 0.95; letter-spacing: -1px; margin-bottom: 16px; }
+        .pricing-title .pt-solid { color: #fff; }
+        .pricing-title .pt-outline { color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.28); }
+        .pricing-subtitle { font-size: 14px; color: rgba(255,255,255,0.4); }
+        .pricing-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .price-card {
+          background: #13103a; border: 1px solid rgba(124,58,237,0.2);
+          border-radius: 12px; padding: 36px 32px 0;
+          display: flex; flex-direction: column;
+          transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+          position: relative; overflow: hidden;
+        }
+        .price-card::before {
+          content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+          width: 220px; height: 220px;
+          background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%);
+          pointer-events: none; transition: opacity 0.3s; opacity: 0;
+        }
+        .price-card:hover { border-color: rgba(124,58,237,0.5); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(124,58,237,0.18); }
+        .price-card:hover::before { opacity: 1; }
+        .pc-tier { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+        .pc-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px; }
+        .pc-amount { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(38px, 4vw, 56px); color: #fff; letter-spacing: -1px; line-height: 1; }
+        .pc-period { font-size: 13px; color: rgba(255,255,255,0.4); }
+        .pc-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 24px; }
+        .pc-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; flex-grow: 1; }
+        .pc-feat { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); }
+        .pc-feat-arrow { width: 22px; height: 22px; background: rgba(124,58,237,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #a78bfa; flex-shrink: 0; transition: background 0.25s, color 0.25s; }
+        .price-card:hover .pc-feat-arrow { background: rgba(124,58,237,0.3); color: #c4b5fd; }
+        .pc-btn {
+          font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px;
+          text-transform: uppercase; letter-spacing: 3px; color: #fff; background: #7c3aed;
+          border: none; padding: 16px; text-align: center; cursor: pointer; text-decoration: none;
+          display: block; margin: 0 -32px; margin-top: auto;
+          border-radius: 0 0 11px 11px; transition: background 0.2s, letter-spacing 0.3s;
+        }
+        /* ─── REVIEWS ─── */
+        .reviews-outer { background: #0e0c2e; padding: 40px 60px 100px; }
+        .reviews-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 80px; align-items: start; }
+        .rev-heading { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.92; }
+        .rev-heading .rh-solid { font-size: clamp(52px, 6vw, 88px); color: #fff; display: block; letter-spacing: -1px; }
+        .rev-heading .rh-outline { font-size: clamp(52px, 6vw, 88px); color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.25); display: block; letter-spacing: -1px; }
+        .rev-stars { display: flex; gap: 4px; margin-bottom: 18px; }
+        .rev-star { color: #f59e0b; font-size: 18px; }
+        .rev-author { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .rev-avatar { width: 52px; height: 52px; border-radius: 50%; border: 2px solid rgba(124,58,237,0.4); background: linear-gradient(135deg, #7c3aed, #1a1660); overflow: hidden; flex-shrink: 0; }
+        .rev-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .rev-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; color: #fff; line-height: 1.1; }
+        .rev-role { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+        .rev-quote { font-size: 16px; line-height: 1.75; color: rgba(255,255,255,0.65); max-width: 580px; margin-bottom: 36px; }
+        .rev-nav { display: flex; gap: 8px; align-items: center; }
+        .rev-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); cursor: pointer; transition: background 0.25s, width 0.25s; border: none; padding: 0; }
+        .rev-dot.on { background: #7c3aed; width: 24px; border-radius: 4px; }
         /* ─── RESPONSIVE ─── */
         @media (max-width: 900px) {
           .about-hero { padding: 100px 24px 60px; }
@@ -833,7 +956,7 @@ export default function About() {
           .why-grid { grid-template-columns: 1fr; }
         }
       `}</style>
-      <div className="page-wrap">
+        <div className="page-wrap">
         {/* ══ HERO ══ */}
         <section className="about-hero" ref={heroRef}>
             <div className="hero-deco tl" />
@@ -842,148 +965,103 @@ export default function About() {
             <div className="about-breadcrumb">
                 <span>Home</span>
                 <span className="sep">/</span>
-                <span className="current">About</span>
+                <span className="current">Pricing</span>
             </div>
             <div className="about-hero-title">
                 <div className="hero-line">
-                <span className="solid">About</span>
-                <span className="outline">Agency</span>
+                <span className="solid">Special</span>
+                <span className="outline">Pricing</span>
                 </div>
             </div>
             <p className="about-desc">
-                We are a passionate team of designers, strategists, and creative thinkers
-                dedicated to building brands that are bold, meaningful, and built to last.
-                Get to know the people and principles behind every project we deliver.
+                Simple, transparent pricing with no hidden fees. Choose the plan that fits
+                your goals and budget — and scale up anytime as your business grows.
             </p>
             </div>
         </section>
 
-        {/* ══ TICKER: Our Story ══ */}
-        <Ticker label="Our Story" />
+        {/* ══ TICKER ══ */}
+        <Ticker label="Pricing & Plans" />
 
-        {/* ══ SECTION 2 ══ */}
-        <section className="section2" ref={section2Ref}>
-            <div className="s2-left">
-            <div className="s2-heading">
-                <span className="word solid-word">Jump Start</span>
-                <span className="word outline-word">Your Design</span>
-            </div>
-            <div className="s2-video-block">
-                <div className="play-btn">▶</div>
-                <span className="play-label">Watch Our Story</span>
-            </div>
-            <p className="s2-body-text">
-                Founded on the belief that great design changes everything, we have spent over
-                a decade helping brands across industries find their voice, sharpen their identity,
-                and connect with the audiences that matter most. Every project we take on is a
-                chance to create something that genuinely moves people — and moves the needle
-                for your business.
+        {/* ══ PRICING ══ */}
+        <div className="pricing-outer">
+            <div className="pricing-header">
+            <h2 className="pricing-title">
+                <span className="pt-solid">Special </span>
+                <span className="pt-outline">Price &amp; Plan</span>
+            </h2>
+            <p className="pricing-subtitle">
+                Every plan includes a dedicated creative team, clear timelines, and results
+                you can measure. No lock-in contracts — cancel anytime.
             </p>
-            <a href="/contact" className="learn-more">Work With Us →</a>
             </div>
-            <div className="s2-right">
-            <div className="s2-img-wrap" ref={imgRef}>
-                <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                alt="Our team collaborating"
-                onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.parentElement.style.background = "linear-gradient(135deg,#1a1660,#2d1b69)";
-                }}
-                />
-            </div>
-            <div className="info-cards" ref={cardsRef}>
-                {INFO_CARDS.map(({ label, arrow, desc }) => (
-                <div className="info-card" key={label}>
-                    <span className="card-label">{label}</span>
-                    <span className="card-desc">{desc}</span>
-                    <div className={`card-arrow${arrow === "↗" ? " diagonal" : ""}`}>→</div>
+            <div className="pricing-grid">
+            {PLANS.map(({ tier, amount, features }) => (
+                <div className="price-card" key={tier}>
+                <p className="pc-tier">{tier}</p>
+                <div className="pc-price">
+                    <span className="pc-amount">{amount}</span>
+                    <span className="pc-period">/Month</span>
                 </div>
+                <div className="pc-divider" />
+                <ul className="pc-features">
+                    {features.map((f) => (
+                    <li className="pc-feat" key={f}>
+                        <span className="pc-feat-arrow">→</span>
+                        {f}
+                    </li>
+                    ))}
+                </ul>
+                <a href="/contact" className="pc-btn">Select Plan</a>
+                </div>
+            ))}
+            </div>
+        </div>
+
+        {/* ══ REVIEWS ══ */}
+        <div className="reviews-outer">
+            <div className="reviews-inner">
+            <div className="rev-left">
+                <div className="rev-heading">
+                <span className="rh-solid">Our Client</span>
+                <span className="rh-outline">Reviews</span>
+                </div>
+            </div>
+            <div className="rev-right">
+                <div className="rev-stars">
+                {Array(r.stars).fill(0).map((_, i) => (
+                    <span className="rev-star" key={i}>★</span>
                 ))}
-            </div>
-            </div>
-        </section>
-
-        {/* ══ TICKER: Our Team ══ */}
-        <Ticker label="Our Team" />
-
-        {/* ══ TEAM ══ */}
-        <section className="team-section" ref={teamRef}>
-            <div className="team-inner">
-            <div className="team-heading">
-                <h2>
-                <span className="th-solid">Meet Our</span>
-                <span className="th-outline">Expert Team</span>
-                </h2>
-                <p>
-                Behind every great project is a team that cares deeply about the craft.
-                Meet the talented individuals who bring creativity, strategy, and dedication
-                to everything we build.
-                </p>
-            </div>
-            <div className="team-grid">
-                {TEAM_MEMBERS.map(({ name, role, email, bg }) => (
-                <div className="team-card" key={name}>
-                    <div className="team-card-img">
+                </div>
+                <div className="rev-author">
+                <div className="rev-avatar">
                     <img
-                        src="https://templatekit.jegtheme.com/creatv/wp-content/uploads/sites/419/2023/10/handsome-guy-in-casual-clothes-standing-with-arms-HWSQN2E-800x960.jpg"
-                        alt={name}
-                        style={{ background: bg }}
-                        onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.parentElement.style.background = bg;
-                        }}
+                    src={r.avatar}
+                    alt={r.name}
+                    onError={(e) => { e.target.style.display = "none"; }}
                     />
-                    <div className="tc-overlay" />
-                    </div>
-                    <span className="team-card-name">{name}</span>
-                    <span className="team-card-role">{role}</span>
-                    <a href={`mailto:${email}`} className="team-card-email">{email}</a>
                 </div>
-                ))}
-            </div>
-            </div>
-        </section>
-
-        {/* ══ SKILLS & AWARDS ══ */}
-        <section className="skills-section" ref={skillsRef}>
-            <div className="skills-inner">
-            <div className="skills-title">
-                <span className="st-solid">Skills And</span>
-                <span className="st-outline">Awards</span>
-            </div>
-            <div className="awards-list">
-                {AWARDS.map(({ country, name, years }) => (
-                <div className="award-row" key={name}>
-                    <div>
-                    <div className="award-country">{country}</div>
-                    <div className="award-name">{name}</div>
-                    </div>
-                    <div className="award-year">{years}</div>
+                <div>
+                    <p className="rev-name">{r.name}</p>
+                    <p className="rev-role">{r.role}</p>
                 </div>
-                ))}
-            </div>
-            <div className="skill-bars">
-                {SKILLS.map(({ name, pct }) => (
-                <div className="skill-row" key={name}>
-                    <div className="skill-top">
-                    <span className="skill-name">{name}</span>
-                    <span className="skill-pct">{pct}%</span>
-                    </div>
-                    <div className="skill-track">
-                    <div
-                        className="skill-fill"
-                        style={{ width: `${pct}%` }}
-                        data-width={`${pct}%`}
+                </div>
+                <p className="rev-quote">{r.quote}</p>
+                <div className="rev-nav">
+                {REVIEWS.map((_, i) => (
+                    <button
+                    key={i}
+                    className={`rev-dot${i === activeReview ? " on" : ""}`}
+                    onClick={() => setActiveReview(i)}
+                    aria-label={`Review ${i + 1}`}
                     />
-                    </div>
-                </div>
                 ))}
+                </div>
             </div>
             </div>
-        </section>
+        </div>
 
-        {/* ══ TICKER: Why Choose Us ══ */}
+        {/* ══ TICKER ══ */}
         <Ticker label="Why Choose Us" />
 
         {/* ══ WHY CHOOSE US ══ */}
@@ -1012,47 +1090,9 @@ export default function About() {
             </div>
         </section>
 
-        {/* ══ TICKER: FAQ's ══ */}
-        <Ticker label="FAQ's" />
-
-        {/* ══ FAQ ══ */}
-        <section className="faq-section" ref={faqRef}>
-            <div className="faq-inner">
-            <div className="faq-left">
-                <div className="faq-title">
-                <span className="ft-solid">Help &amp; FAQ</span>
-                <span className="ft-outline">Centers</span>
-                </div>
-                <p className="faq-desc">
-                Have questions about working with us? We have answered the most common ones
-                below. If you don't find what you're looking for, our team is always happy
-                to jump on a call and talk through your specific needs.
-                </p>
-                <a href="/contact" className="faq-contact-btn">Contact Us</a>
-            </div>
-            <div className="faq-list">
-                {FAQ_ITEMS.map(({ q, a }, i) => (
-                <div
-                    className={`faq-item${openFaq === i ? " open" : ""}`}
-                    key={i}
-                    onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                >
-                    <div className="faq-question">
-                    <span className="faq-q-text">{q}</span>
-                    <span className="faq-toggle">+</span>
-                    </div>
-                    <div className="faq-answer">
-                    <p>{a}</p>
-                    </div>
-                </div>
-                ))}
-            </div>
-            </div>
-        </section>
-
         </div>
     </>
   );
 }
 
-About.layout = (page) => <MainLayout>{page}</MainLayout>;
+Pricing.layout = (page) => <MainLayout>{page}</MainLayout>;
