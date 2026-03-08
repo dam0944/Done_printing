@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap');
+
+/* ─── English (default) ────────────────────────────────────── */
+:root {
+    --font-body:    'Barlow', sans-serif;
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-size-nav:   14px;
+    --font-size-body:  15px;
+    --letter-spacing-nav:  2.5px;
+    --letter-spacing-btn:  2.5px;
+    --text-transform: uppercase;
+}
+
+/* ─── Khmer override ───────────────────────────────────────── */
+:root[data-lang="km"] {
+    --font-body:    'Noto Sans Khmer', sans-serif;
+    --font-display: 'Noto Sans Khmer', sans-serif;
+    --font-size-nav:   13px;
+    --font-size-body:  14px;
+    --letter-spacing-nav:  0px;
+    --letter-spacing-btn:  0px;
+    --text-transform: none;
+}
+
+/* ─── Apply globally ───────────────────────────────────────── */
+body {
+    font-family: var(--font-body);
+}
+
+/* Nav links */
+.hd-item > a,
+.hd-item > .hd-trigger,
+.mobile-nav-item,
+.mobile-pages-trigger,
+.mobile-pages-sub a {
+    font-family: var(--font-display) !important;
+    font-size: var(--font-size-nav) !important;
+    letter-spacing: var(--letter-spacing-nav) !important;
+    text-transform: var(--text-transform) !important;
+}
+
+/* Dropdown links */
+.hd-dropdown-inner a {
+    font-family: var(--font-display) !important;
+    letter-spacing: var(--letter-spacing-nav) !important;
+    text-transform: var(--text-transform) !important;
+}
+
+/* CTA / lang buttons */
+.hd-cta,
+.mobile-cta,
+.hd-lang-btn,
+.mobile-lang-btn {
+    font-family: var(--font-display) !important;
+    letter-spacing: var(--letter-spacing-btn) !important;
+    text-transform: var(--text-transform) !important;
+}
+
+/* Footer text */
+.footer-col-title,
+.footer-col-links a,
+.footer-social-btn,
+.footer-logo-tagline,
+.footer-copy,
+.footer-contact-value {
+    font-family: var(--font-body) !important;
+    letter-spacing: 0 !important;
+}
+
+.footer-contact-label {
+    font-family: var(--font-display) !important;
+    letter-spacing: var(--letter-spacing-nav) !important;
+    text-transform: var(--text-transform) !important;
+}
+
+/* Social buttons */
+.footer-social-btn {
+    text-transform: var(--text-transform) !important;
+    letter-spacing: var(--letter-spacing-btn) !important;
+}
+
+/* Khmer-specific line height fix */
+:root[data-lang="km"] body,
+:root[data-lang="km"] .footer-contact-value,
+:root[data-lang="km"] .footer-col-links a,
+:root[data-lang="km"] .footer-social-desc,
+:root[data-lang="km"] .mobile-nav-item {
+    line-height: 1.9;
+}

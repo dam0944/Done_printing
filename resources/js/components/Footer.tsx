@@ -1,330 +1,311 @@
 import { Link } from "@inertiajs/react";
+import type { FC } from "react";
+import { useLang } from "@/contexts/LangContext";
 
+/* ════════════════════════════════════════
+   TYPES
+════════════════════════════════════════ */
+interface FooterLink {
+  href: string;
+  key:  string;
+}
+
+interface ContactBlock {
+  labelKey: string;
+  valueKey:  string;
+}
+
+/* ════════════════════════════════════════
+   CONSTANTS
+════════════════════════════════════════ */
+const CONTACT_BLOCKS: ContactBlock[] = [
+  { labelKey: "footer.office.label", valueKey: "footer.office.value" },
+  { labelKey: "footer.email.label",  valueKey: "footer.email.value"  },
+  { labelKey: "footer.phone.label",  valueKey: "footer.phone.value"  },
+];
+
+const COMPANY_LINKS: FooterLink[] = [
+  { href: "/about",        key: "footer.company.about"        },
+  { href: "/community",    key: "footer.company.community"    },
+  { href: "/careers",      key: "footer.company.careers"      },
+  { href: "/testimonials", key: "footer.company.testimonials" },
+  { href: "/services",     key: "footer.company.services"     },
+  { href: "/project",      key: "footer.company.project"      },
+];
+
+const QUICK_LINKS: FooterLink[] = [
+  { href: "/contact",   key: "footer.quick.contact"   },
+  { href: "/privacy",   key: "footer.quick.privacy"   },
+  { href: "/faq",       key: "footer.quick.faq"       },
+  { href: "/licensing", key: "footer.quick.licensing" },
+  { href: "/help",      key: "footer.quick.help"      },
+  { href: "/terms",     key: "footer.quick.terms"     },
+];
+
+const SOCIAL_LINKS: FooterLink[] = [
+  { href: "https://facebook.com",  key: "footer.social.facebook"  },
+  { href: "https://twitter.com",   key: "footer.social.twitter"   },
+  { href: "https://linkedin.com",  key: "footer.social.linkedin"  },
+  { href: "https://instagram.com", key: "footer.social.instagram" },
+  { href: "https://pinterest.com", key: "footer.social.pinterest" },
+];
+
+/* ════════════════════════════════════════
+   SUB-COMPONENTS
+════════════════════════════════════════ */
+interface FooterColProps {
+  title:    string;
+  children: React.ReactNode;
+}
+
+const FooterCol: FC<FooterColProps> = ({ title, children }) => (
+  <div className="footer-col">
+    <h4 className="footer-col-title">{title}</h4>
+    {children}
+  </div>
+);
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
 export default function Footer() {
+  const { t } = useLang();
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
-
-        /* ── tokens ── */
-        .footer-wrap {
-          --ff-head:    'Barlow Condensed', sans-serif;
-          --ff-body:    'Barlow', sans-serif;
-          --c-white:    #ffffff;
-          --c-white2:   rgba(255,255,255,0.80);
-          --c-white3:   rgba(255,255,255,0.52);
-          --c-white4:   rgba(255,255,255,0.32);
-          --c-purple:   #7c3aed;
-          --c-purple-l: #a78bfa;
-          --lh-body:    1.72;
+        /* ── Variable fallbacks (Header sets these on :root globally) ── */
+        :root {
+          --f-body:    'Barlow', sans-serif;
+          --f-display: 'Barlow Condensed', sans-serif;
+          --tt:        uppercase;
+          --ls-nav:    2.5px;
+          --lh-body:   1.8;
+          --purple:    #7c3aed;
+          --purple-h:  #6d28d9;
+        }
+        :root[data-lang="km"] {
+          --f-body:    'Noto Sans Khmer', sans-serif;
+          --f-display: 'Noto Sans Khmer', sans-serif;
+          --tt:        none;
+          --ls-nav:    0px;
+          --lh-body:   2;
         }
 
+        /* ════ FOOTER SHELL ════ */
         .footer-wrap {
           background: #080620;
-          font-family: var(--ff-body);
-          font-size: 15px;
-          -webkit-font-smoothing: antialiased;
-          padding: 80px 60px 0;
-          border-top: 1px solid rgba(255,255,255,0.07);
-          color: var(--c-white2);
+          font-family: var(--f-body);
+          color: #fff;
+          border-top: 1px solid rgba(124,58,237,0.15);
         }
 
+        /* ════ MAIN GRID ════ */
         .footer-main {
-          max-width: 1280px;
-          margin: 0 auto;
+          max-width: 1400px; margin: 0 auto;
+          padding: 80px 48px 72px;
           display: grid;
-          grid-template-columns: 280px 1fr 1fr 1fr;
-          gap: 64px;
-          padding-bottom: 80px;
+          grid-template-columns: 300px 1fr 1fr 1fr;
+          gap: 48px;
           align-items: start;
         }
 
-        /* ─── Contact Card ─── */
+        /* ════ CONTACT CARD ════ */
         .footer-contact-card {
-          background: var(--c-purple);
-          border-radius: 12px;
-          padding: 34px 28px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
+          background: var(--purple);
+          border-radius: 16px;
+          padding: 36px 32px;
+          display: flex; flex-direction: column; gap: 24px;
+        }
+        .footer-contact-block { display: flex; flex-direction: column; gap: 5px; }
+        .footer-contact-label {
+          font-family: var(--f-display);
+          font-weight: 700; font-size: 11px;
+          text-transform: var(--tt); letter-spacing: var(--ls-nav);
+          color: rgba(255,255,255,0.6);
+        }
+        .footer-contact-value {
+          font-family: var(--f-body);
+          font-size: 15px; font-weight: 500;
+          color: #fff; line-height: var(--lh-body);
         }
 
-        .fc-label {
-          font-family: var(--ff-head);
-          font-weight: 800;
-          font-size: 13px;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          color: rgba(255,255,255,0.65);
-          margin-bottom: 6px;
-        }
-
-        .fc-value {
-          font-size: 15px;
-          font-weight: 500;
-          color: var(--c-white);
-          line-height: var(--lh-body);
-        }
-
-        .fc-value a {
-          color: var(--c-white);
-          text-decoration: none;
-          transition: opacity 0.2s;
-        }
-        .fc-value a:hover { opacity: 0.75; }
-
-        /* ─── Nav Columns ─── */
+        /* ════ LINK COLUMNS ════ */
+        .footer-col { display: flex; flex-direction: column; }
         .footer-col-title {
-          font-family: var(--ff-body);
-          font-weight: 700;
-          font-size: 16px;
-          color: var(--c-white);
-          margin-bottom: 22px;
-          letter-spacing: 0.1px;
-          line-height: 1.3;
+          font-family: var(--f-body);
+          font-weight: 700; font-size: 17px;
+          color: #fff; margin: 0 0 24px;
+          letter-spacing: 0.2px;
         }
-
-        .footer-nav {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-
-        .footer-nav li a {
-          font-size: 15px;
-          font-weight: 400;
-          color: var(--c-white3);
+        .footer-col-links { display: flex; flex-direction: column; }
+        .footer-col-links a {
+          font-family: var(--f-body);
+          font-size: 15px; font-weight: 400;
+          color: rgba(255,255,255,0.45);
           text-decoration: none;
-          line-height: 1.4;
-          transition: color 0.2s;
+          padding: 7px 0;
+          transition: color 0.2s, padding-left 0.2s;
+          display: block;
+        }
+        .footer-col-links a:hover { color: #fff; padding-left: 6px; }
+
+        /* ════ SOCIAL ════ */
+        .footer-social-desc {
+          font-family: var(--f-body);
+          font-size: 14px; line-height: var(--lh-body);
+          color: rgba(255,255,255,0.45);
+          margin-bottom: 20px; max-width: 260px;
+        }
+        .footer-social-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .footer-social-btn {
+          font-family: var(--f-display);
+          font-weight: 700; font-size: 11px;
+          text-transform: var(--tt); letter-spacing: var(--ls-nav);
+          color: rgba(255,255,255,0.65);
+          text-decoration: none;
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 20px;
+          padding: 9px 18px;
+          transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
           display: inline-block;
         }
-        .footer-nav li a:hover { color: var(--c-purple-l); }
-
-        /* ─── Social Pills ─── */
-        .footer-col-social-desc {
-          font-size: 14px;
-          color: var(--c-white3);
-          line-height: var(--lh-body);
-          margin-bottom: 20px;
-          max-width: 220px;
+        .footer-social-btn:hover {
+          background: var(--purple);
+          border-color: var(--purple);
+          color: #fff; transform: translateY(-1px);
         }
 
-        .footer-social-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
+        /* ════ BOTTOM BAR ════ */
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); }
+        .footer-bottom-inner {
+          max-width: 1400px; margin: 0 auto;
+          padding: 24px 48px;
+          display: flex; align-items: center;
+          justify-content: space-between; gap: 20px;
         }
-
-        .social-pill {
-          font-family: var(--ff-head);
-          font-weight: 700;
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 1.8px;
-          color: var(--c-white3);
-          border: 1px solid rgba(255,255,255,0.14);
-          border-radius: 999px;
-          padding: 9px 20px;
-          text-decoration: none;
-          transition: background 0.22s, border-color 0.22s, color 0.22s;
-          background: rgba(255,255,255,0.04);
-          line-height: 1;
-        }
-        .social-pill:hover {
-          background: var(--c-purple);
-          border-color: var(--c-purple);
-          color: var(--c-white);
-        }
-
-        /* ─── Bottom Bar ─── */
-        .footer-bottom {
-          max-width: 1280px;
-          margin: 0 auto;
-          border-top: 1px solid rgba(255,255,255,0.08);
-          padding: 24px 0 28px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 20px;
-        }
-
         .footer-logo {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          text-decoration: none;
-          flex-shrink: 0;
+          display: flex; align-items: center; gap: 12px;
+          text-decoration: none; flex-shrink: 0;
         }
-
-        .footer-logo-mark {
-          font-family: var(--ff-head);
-          font-weight: 900;
-          font-size: 23px;
-          color: var(--c-white);
-          letter-spacing: -0.5px;
-          line-height: 1;
+        .footer-logo img {
+          height: 36px; width: auto;
+          object-fit: contain; display: block;
         }
-        .footer-logo-mark .lm-bracket { color: var(--c-purple); }
-        .footer-logo-mark .lm-dot {
-          color: var(--c-purple);
-          font-size: 28px;
-          line-height: 0;
-          vertical-align: -3px;
-          margin-left: 1px;
-        }
-
         .footer-logo-divider {
-          width: 1px;
-          height: 20px;
-          background: rgba(255,255,255,0.16);
-          flex-shrink: 0;
+          width: 1px; height: 20px;
+          background: rgba(255,255,255,0.2); flex-shrink: 0;
         }
-
-        .footer-tagline {
-          font-size: 14px;
-          font-weight: 400;
-          color: var(--c-white3);
-          letter-spacing: 0.2px;
-          white-space: nowrap;
+        .footer-logo-tagline {
+          font-family: var(--f-body);
+          font-size: 14px; color: rgba(255,255,255,0.4); font-weight: 400;
         }
-
         .footer-copy {
-          font-size: 14px;
-          font-weight: 400;
-          color: var(--c-white4);
-          line-height: 1.5;
+          font-family: var(--f-body);
+          font-size: 13px; color: rgba(255,255,255,0.35);
+          text-align: right; line-height: 1.6;
         }
-        .footer-copy strong {
-          color: var(--c-white3);
-          font-weight: 600;
-        }
+        .footer-copy strong { color: rgba(255,255,255,0.7); font-weight: 600; }
 
-        /* ─── Responsive ─── */
+        /* ════ RESPONSIVE ════ */
         @media (max-width: 1100px) {
           .footer-main {
             grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            gap: 40px; padding: 64px 40px 56px;
           }
-          .footer-wrap { padding: 64px 40px 0; }
+          .footer-contact-card { grid-column: span 2; max-width: 440px; }
         }
-
         @media (max-width: 768px) {
           .footer-main {
             grid-template-columns: 1fr 1fr;
-            gap: 36px;
+            padding: 52px 24px 44px; gap: 32px;
           }
-          .footer-wrap { padding: 56px 24px 0; }
-          .footer-main { padding-bottom: 56px; }
+          .footer-contact-card { grid-column: span 2; max-width: 100%; }
+          .footer-bottom-inner {
+            padding: 20px 24px;
+            flex-direction: column; align-items: flex-start; gap: 12px;
+          }
+          .footer-copy { text-align: left; }
         }
-
         @media (max-width: 540px) {
-          .footer-main { grid-template-columns: 1fr; gap: 32px; }
-          .footer-bottom {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 14px;
-            padding: 20px 0 24px;
+          .footer-main {
+            grid-template-columns: 1fr;
+            padding: 40px 20px 36px;
           }
-          .footer-tagline { display: none; }
-          .footer-logo-divider { display: none; }
+          .footer-contact-card { grid-column: span 1; }
+          .footer-bottom-inner { padding: 18px 20px; }
+          .footer-col-title    { font-size: 15px; margin-bottom: 18px; }
+          .footer-social-desc  { max-width: 100%; }
         }
       `}</style>
 
       <footer className="footer-wrap">
+
+        {/* ════ MAIN GRID ════ */}
         <div className="footer-main">
 
-          {/* ── Contact Card ── */}
+          {/* Contact card */}
           <div className="footer-contact-card">
-            <div>
-              <div className="fc-label">Office</div>
-              <div className="fc-value">Jl. Raya Puputan No 142,<br />Denpasar, Bali</div>
-            </div>
-            <div>
-              <div className="fc-label">Email</div>
-              <div className="fc-value">
-                <a href="mailto:support@domain.com">support@domain.com</a>
+            {CONTACT_BLOCKS.map(({ labelKey, valueKey }) => (
+              <div className="footer-contact-block" key={labelKey}>
+                <span className="footer-contact-label">{t(labelKey)}</span>
+                <span className="footer-contact-value">{t(valueKey)}</span>
               </div>
-            </div>
-            <div>
-              <div className="fc-label">Phone</div>
-              <div className="fc-value">
-                <a href="tel:+6281115368">(+62) 81 115 3568</a>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* ── Our Company ── */}
-          <div>
-            <div className="footer-col-title">Our Company</div>
-            <ul className="footer-nav">
-              {["About", "Community", "Careers", "Testimonials", "Services", "Project"].map((item) => (
-                <li key={item}>
-                  <Link href={`/${item.toLowerCase()}`}>{item}</Link>
-                </li>
+          {/* Our Company */}
+          <FooterCol title={t("footer.company")}>
+            <div className="footer-col-links">
+              {COMPANY_LINKS.map(({ href, key }) => (
+                <Link key={key} href={href}>{t(key)}</Link>
               ))}
-            </ul>
-          </div>
+            </div>
+          </FooterCol>
 
-          {/* ── Quick Links ── */}
-          <div>
-            <div className="footer-col-title">Quick Links</div>
-            <ul className="footer-nav">
-              {[
-                { label: "Contact",           href: "/contact" },
-                { label: "Privacy Policy",    href: "/privacy" },
-                { label: "FAQ's",             href: "/faq" },
-                { label: "Licensing",         href: "/licensing" },
-                { label: "Help Center",       href: "/help" },
-                { label: "Terms & Condition", href: "/terms" },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <Link href={href}>{label}</Link>
-                </li>
+          {/* Quick Links */}
+          <FooterCol title={t("footer.quicklinks")}>
+            <div className="footer-col-links">
+              {QUICK_LINKS.map(({ href, key }) => (
+                <Link key={key} href={href}>{t(key)}</Link>
               ))}
-            </ul>
-          </div>
+            </div>
+          </FooterCol>
 
-          {/* ── Social Media ── */}
-          <div>
-            <div className="footer-col-title">Our Social Media</div>
-            <p className="footer-col-social-desc">
-              Follow us and stay updated with our latest projects and creative work.
-            </p>
+          {/* Social Media */}
+          <FooterCol title={t("footer.social")}>
+            <p className="footer-social-desc">{t("footer.social.desc")}</p>
             <div className="footer-social-grid">
-              {[
-                { label: "Facebook",  href: "https://facebook.com" },
-                { label: "Twitter",   href: "https://twitter.com" },
-                { label: "LinkedIn",  href: "https://linkedin.com" },
-                { label: "Instagram", href: "https://instagram.com" },
-                { label: "Pinterest", href: "https://pinterest.com" },
-              ].map(({ label, href }) => (
-                <a key={label} href={href} className="social-pill" target="_blank" rel="noreferrer">
-                  {label}
+              {SOCIAL_LINKS.map(({ href, key }) => (
+                <a
+                  key={key}
+                  href={href}
+                  className="footer-social-btn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t(key)}
                 </a>
               ))}
             </div>
-          </div>
+          </FooterCol>
 
         </div>
 
-        {/* ── Bottom Bar ── */}
+        {/* ════ BOTTOM BAR ════ */}
         <div className="footer-bottom">
-          <a href="/" className="footer-logo">
-            <span className="footer-logo-mark">
-              <span className="lm-bracket">[</span>Creatv<span className="lm-bracket">]</span><span className="lm-dot">·</span>
-            </span>
-            <span className="footer-logo-divider" />
-            <span className="footer-tagline">Creative Design Agency.</span>
-          </a>
-
-          <p className="footer-copy">
-            © {new Date().getFullYear()} Templatekit by <strong>Palm Technology</strong>. All rights reserved.
-          </p>
+          <div className="footer-bottom-inner">
+            <Link href="/" className="footer-logo" aria-label="Creatv – home">
+              <img src="/flage/logo.png" alt="Creatv" />
+              <span className="footer-logo-divider" aria-hidden="true" />
+              <span className="footer-logo-tagline">{t("footer.tagline")}</span>
+            </Link>
+            <p className="footer-copy">
+              {t("footer.copy")} <strong>{t("footer.copy.by")}</strong>. {t("footer.copy.end")}
+            </p>
+          </div>
         </div>
+
       </footer>
     </>
   );

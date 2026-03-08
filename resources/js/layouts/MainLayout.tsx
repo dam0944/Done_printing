@@ -1,48 +1,60 @@
-import { ReactNode } from 'react';
-import { Head } from '@inertiajs/react';
-import Navbar from '../components/Navbar';
-import Footer from '@/components/Footer';
-import { LangProvider } from '@/contexts/LangContext';
+import { Head } from "@inertiajs/react";
+import type { ReactNode, FC } from "react";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { LangProvider } from "@/contexts/LangContext";
 
 interface MainLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
-export default function MainLayout({ children }: MainLayoutProps) {
-    return (
-        // ← LangProvider wraps everything so useLang() works in Navbar + Footer
-        <LangProvider>
-            <div
-                style={{
-                    minHeight: '100vh',
-                    background: '#080808',
-                    color: '#ffffff',
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
-                {/* Bootstrap Icons CDN + Hanuman Khmer font — loaded once for the whole site */}
-                <Head>
-                    <link
-                        rel="stylesheet"
-                        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-                    />
-                    {/* Hanuman: best Khmer web font, also renders Latin well */}
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700;900&display=swap"
-                        rel="stylesheet"
-                    />
-                </Head>
+/* ════════════════════════════════════════
+   LAYOUT
+════════════════════════════════════════ */
+const MainLayout: FC<MainLayoutProps> = ({ children }) => (
+  <LangProvider>
+    <Head>
+      {/* Bootstrap Icons — loaded once for the whole site */}
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      />
+      {/* Google Fonts — Barlow (EN body/display) + Noto Sans Khmer (KM) + Hanuman (KM fallback) */}
+      <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+      />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Hanuman:wght@400;700;900&family=Koulen&display=swap"
+        rel="stylesheet"
+      />
+    </Head>
 
-                {/* Fixed Navbar */}
-                <Navbar />
+    <div className="ml-root">
+      <style>{`
+        .ml-root {
+          min-height: 100vh;
+          background: #0e0c2e;
+          color: #fff;
+          display: flex;
+          flex-direction: column;
+        }
+        .ml-main {
+          flex: 1;
+          width: 100%;
+        }
+      `}</style>
 
-                {/* Page content */}
-                <main style={{ flex: 1, width: '100%' }}>{children}</main>
+      <Navbar />
+      <main className="ml-main">{children}</main>
+      <Footer />
+    </div>
+  </LangProvider>
+);
 
-                {/* Footer */}
-                <Footer />
-            </div>
-        </LangProvider>
-    );
-}
+export default MainLayout;
