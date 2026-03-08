@@ -45,11 +45,11 @@ const translations: Record<Lang, Record<string, string>> = {
 
         // ── Footer — contact card ─────────────────────────────────
         'footer.office.label':   'Office',
-        'footer.office.value':   'Jl. Raya Puputan No 142, Denpasar, Bali',
+        'footer.office.value':   'Jl. Sensok No 142, Phnom Penh, Cambodia',
         'footer.email.label':    'Email',
         'footer.email.value':    'support@domain.com',
         'footer.phone.label':    'Phone',
-        'footer.phone.value':    '(+62) 81 115 3568',
+        'footer.phone.value':    '(+855) 81 115 3568',
 
         // ── Footer — Our Company links ────────────────────────────
         'footer.company.about':        'About',
@@ -729,11 +729,11 @@ const translations: Record<Lang, Record<string, string>> = {
 
         // ── Footer — contact card ─────────────────────────────────
         'footer.office.label':   'ការិយាល័យ',
-        'footer.office.value':   'ជាន់លេខ ១៤២ ផ្លូវ Raya Puputan, ដេនប៉ាសា, បាលី',
+        'footer.office.value':   'ជាន់លេខ ១៤២ ផ្លូវ​​ សែនសុខ​, ភ្នំពេញ, កម្ពុជា',
         'footer.email.label':    'អ៊ីមែល',
         'footer.email.value':    'support@domain.com',
         'footer.phone.label':    'ទូរស័ព្ទ',
-        'footer.phone.value':    '(+62) 81 115 3568',
+        'footer.phone.value':    '(+855) 81 115 3568',
 
         // ── Footer — Our Company links ────────────────────────────
         'footer.company.about':        'អំពីយើង',
